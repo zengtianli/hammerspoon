@@ -1,6 +1,8 @@
 -- require("./shortcut.lua")
 dofile(hs.configdir .. "/shortcut.lua")
-dofile(hs.configdir .. "/vimlike.lua")
+require "vimlike.vimlike"
+
+-- dofile(hs.configdir .. "/vimlike.lua")
 -- dofile(hs.configdir .. "/vimlike1.lua")aaaa
 function reloadConfig(files)
 	doReload = false

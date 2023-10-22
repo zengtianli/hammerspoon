@@ -7,9 +7,9 @@ hs.myVars.menuBar:setTitle("Waiting...")
 hs.myVars.keyBuffer = ""
 hs.myVars.inNormMode = false
 hs.myVars.operationFlag = nil
-local operations = require("operations")
-local motions = require("motions")
-local applicationChanged = require("applicationChanged")
+local operations = require("vimlike.operations")
+local motions = require("vimlike.motions")
+local applicationChanged = require("vimlike.applicationChanged")
 -- local ddHandler = require("ddHandler")
 
 local function handleNormMode(event)
