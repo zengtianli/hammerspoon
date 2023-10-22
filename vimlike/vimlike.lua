@@ -82,37 +82,6 @@ local function handleNormMode(event)
 						firstGPressed = false -- Reset the flag
 					end
 				end
-
-
-
-
-				-- else
-				-- 	if not firstGPressed then
-				-- 	firstGPressed = true
-				-- 	return true
-				-- 	-- else select to up
-				-- else
-				-- 	hs.eventtap.keyStroke({ "shift", "cmd" }, "up") -- Select next character
-				-- 	hs.eventtap.keyStroke({}, "delete")        -- Delete selection
-				-- 	firstGPressed = false                      -- Reset the flag
-				-- end
-
-				-- -- 		hs.eventtap.keyStroke({ "shift", "cmd" }, "up") -- Select next character
-				-- -- 		hs.eventtap.keyStroke({}, "delete")          -- Delete selection
-				-- -- 	end
-				-- -- end
-				-- -- if
-				-- else
-				-- 	-- If this is the second 'g' press
-				-- 	if hs.myVars.operationFlag == "delete" then
-				-- 		if event:getFlags()["shift"] then
-				-- 			hs.eventtap.keyStroke({ "shift", "cmd" }, "down")         -- Select to the end
-				-- 		else
-				-- 		end
-				-- 		hs.eventtap.keyStroke({}, "delete")                         -- Delete selection
-				-- 	else
-				-- 		hs.eventtap.keyStroke({ "cmd" }, "up")                      -- Move to the beginning of the document
-				-- 	end
 				return true
 			end
 		end

@@ -3,10 +3,7 @@
 local function applicationChanged(appName, eventType, hs, handleNormMode)
 	local appsToHandleNormMode = {
 		"WeChat",
-		"Arc",
-		-- Add other app names here, e.g.:
-		-- "AnotherApp",
-		-- "YetAnotherApp",
+		-- "Arc",
 	}
 
 	local function isInList(val, list)
@@ -44,4 +41,3 @@ local function applicationChanged(appName, eventType, hs, handleNormMode)
 end
 
 return applicationChanged
-

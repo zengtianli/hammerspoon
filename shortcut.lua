@@ -12,4 +12,3 @@ hs.hotkey.bind({ "cmd", "ctrl", "shift" }, ".", function() hs.application.open("
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "W", function() hs.application.open("Warp") end)
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "x", function() hs.application.open("WeChat") end)
 hs.hotkey.bind({ "cmd", "option" }, ",", function() hs.application.open("System Settings") end) -- S for System
-
