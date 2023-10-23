@@ -2,6 +2,8 @@ dofile(hs.configdir .. "/shortcut.lua")
 dofile(hs.configdir .. "/keyboard_maestro.lua")
 require "vimlike.vimlike"
 require "recordedPosition"
+require "Clipboard_Manager"
+-- require "test"
 
 
 
