@@ -1,54 +1,46 @@
--- Key Detector
-local isDetectorActive = false
-
-function keyDetector(event)
-	local flags = event:getFlags()
-	local key = event:getCharacters(true)
-	local keyCode = event:getKeyCode()
-	local isCmd = flags['cmd']
-	local keySymbolicName = hs.keycodes.map[keyCode]
-
-	if keySymbolicName == "return" then
-		key = "<return>"
-	elseif keySymbolicName == "delete" then
-		key = "<delete>"
-	elseif keySymbolicName == "tab" then
-		key = "<tab>"
-	elseif keySymbolicName == "space" then
-		key = "<space>"
-	elseif keySymbolicName == "escape" then
-		key = "<escape>"
-	elseif keySymbolicName == "up" then
-		key = "<up>"
-	elseif keySymbolicName == "down" then
-		key = "<down>"
-	elseif keySymbolicName == "left" then
-		key = "<left>"
-	elseif keySymbolicName == "right" then
-		key = "<right>"
-	end
-
-	if isCmd then
-		hs.alert.show("You pressed: Cmd + " .. key)
-	else
-		hs.alert.show("You pressed: " .. key)
+-- Queue to hold the functions to execute
+local actionQueue = {}
+-- Function to run the next action in the queue
+function runNextAction()
+	if #actionQueue > 0 then
+		local nextAction = table.remove(actionQueue, 1)
+		nextAction()
 	end
 end
 
--- Watch for keyDown events
-keyTap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, keyDetector)
+-- Pushing the actions to the queue
+function sendToApp()
+	-- Add the actions to the action queue
+	table.insert(actionQueue,
+		function()
+			hs.eventtap.keyStroke({ "cmd", "ctrl", "shift" }, "x"); hs.timer.doAfter(0.5, runNextAction)
+		end) -- for wechat app
+	table.insert(actionQueue, function()
+		hs.eventtap.keyStroke({ "cmd" }, "V"); hs.timer.doAfter(0.5, runNextAction)
+	end)
+	table.insert(actionQueue, function()
+		hs.eventtap.keyStroke({}, "return"); hs.timer.doAfter(0.5, runNextAction)
+	end)
+	table.insert(actionQueue, function()
+		hs.eventtap.keyStroke({ "cmd" }, "tab"); hs.timer.doAfter(0.5, runNextAction)
+	end)
+	table.insert(actionQueue, function()
+		hs.eventtap.keyStroke({}, "return"); hs.timer.doAfter(1, runNextAction)
+	end)
+	-- Start the queue by running the first action
+	runNextAction()
+end
 
-function toggleKeyDetector()
-	if isDetectorActive then
-		keyTap:stop()
-		isDetectorActive = false
-		hs.alert.show("Key Detector Deactivated")
-	else
-		keyTap:start()
-		isDetectorActive = true
-		hs.alert.show("Key Detector Activated")
+function quickNoteDialog()
+	local ok, userInput = hs.osascript.applescript([[
+        set userInput to text returned of (display dialog "Quick Note:" default answer "")
+        return userInput
+    ]])
+	if ok then
+		hs.pasteboard.setContents(userInput)
+		hs.alert.show("Text added to clipboard!")
+		sendToApp()
 	end
 end
 
--- Bind to Cmd + Alt + D (You can change this combination as per your liking)
-hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "D", toggleKeyDetector)
+hs.hotkey.bind({ "cmd", "alt" }, "N", quickNoteDialog)
