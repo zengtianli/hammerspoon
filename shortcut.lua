@@ -13,6 +13,8 @@ local appHotkeys = {
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "W", function() hs.application.open("Warp") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "x", function() hs.application.open("WeChat") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "/", function() hs.application.open("Obsidian") end),
+	hs.hotkey.new({ "cmd", "ctrl", "alt", "shift" }, "o",
+		function() hs.execute("/Users/tianli/Documents/sync/hammerspoon/scripts/obs.sh", true) end),
 	hs.hotkey.new({ "cmd", "option" }, ",", function() hs.application.open("System Settings") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "l", function()
 		hs.application.open("ClashX Pro")

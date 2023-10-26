@@ -1,4 +1,4 @@
--- On load, fetch saved positions for all apps from Hammerspoon settings
+local shouldClick = false -- Default behavior is to click
 local recordedAppPositions = hs.settings.get("recordedAppMousePositions") or {}
 local function getCurrentAppName()
 	local app = hs.application.frontmostApplication()
@@ -14,22 +14,31 @@ local function recordMousePositionForApp()
 	hs.settings.set("recordedAppMousePositions", recordedAppPositions) -- Save to persistent storage
 	hs.alert.show("Recorded position for " .. appName .. " at position " .. #recordedAppPositions[appName])
 end
-local function moveToRecordedPositionsAndClickForApp()
+local function moveToRecordedPositionsAndClickForApp(returnToOriginal)
+	local returnToOriginal = returnToOriginal or false -- Default is true if not provided
 	local appName = getCurrentAppName()
 	local positionsForApp = recordedAppPositions[appName] or {}
+	local originalPosition = hs.mouse.absolutePosition() -- Capture the original mouse position
 	if #positionsForApp > 0 then
 		local delay = 0
 		for i, pos in ipairs(positionsForApp) do
 			hs.timer.doAfter(delay, function()
 				hs.mouse.absolutePosition(pos)
 				hs.alert.show("Moved to position " .. i)
-				hs.eventtap.leftClick(pos)
+				if shouldClick then hs.eventtap.leftClick(pos) end
 			end)
 			delay = delay + 1
 		end
-		hs.doAfter(#positionsForApp, function()
-			hs.alert.show("Finished moving to positions for " .. appName)
-		end)
+		if returnToOriginal then
+			hs.timer.doAfter(#positionsForApp, function()
+				hs.alert.show("original Mode Finished moving to positions for " .. appName)
+				hs.mouse.absolutePosition(originalPosition) -- Return to the original position only if returnToOriginal is true
+			end)
+		else
+			hs.timer.doAfter(#positionsForApp, function()
+				hs.alert.show("norma Mode Finished moving to positions for " .. appName)
+			end)
+		end
 	else
 		hs.alert.show("No positions recorded for " .. appName)
 	end
@@ -50,15 +59,13 @@ local function moveToAdjacentRecordedPositionForApp(direction)
 		local pos = positionsForApp[lastMovedIndexForApp[appName]]
 		hs.mouse.absolutePosition(pos)
 		hs.timer.usleep(500000) -- sleep for 0.5 seconds to observe the movement
-		hs.eventtap.leftClick(pos)
+		if shouldClick then hs.eventtap.leftClick(pos) end
 		hs.alert.show("Moved to position " .. lastMovedIndexForApp[appName] .. " for " .. appName)
 	else
 		hs.alert.show("No positions recorded for " .. appName)
 	end
 end
--- Keybindings
 local currentActivePosition = nil
--- hs.hotkey.bind({ "alt" }, "tab", moveToNextRecordedPositionForApp)
 local function clearRecordedPositionsForApp()
 	local appName = getCurrentAppName()
 	recordedAppPositions[appName] = {}
@@ -72,7 +79,7 @@ local function moveToSpecifiedPositionForApp(positionIndex)
 		local pos = positionsForApp[positionIndex]
 		hs.mouse.absolutePosition(pos)
 		hs.timer.usleep(500000) -- sleep for 0.5 seconds to observe the movement
-		hs.eventtap.leftClick(pos)
+		if shouldClick then hs.eventtap.leftClick(pos) end
 		currentActivePosition = positionIndex
 		hs.alert.show("Moved to position " .. positionIndex .. " for " .. appName)
 	else
@@ -89,9 +96,6 @@ local function updateCurrentActivePositionForApp()
 		hs.alert.show("No active position selected.")
 	end
 end
-
-hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "U", updateCurrentActivePositionForApp)
-
 local appHotkeys = {
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "1", function() moveToSpecifiedPositionForApp(1) end),
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "2", function() moveToSpecifiedPositionForApp(2) end),
@@ -100,8 +104,15 @@ local appHotkeys = {
 	hs.hotkey.bind({ "alt", "shift" }, "tab", function() moveToAdjacentRecordedPositionForApp("previous") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "U", updateCurrentActivePositionForApp),
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "R", recordMousePositionForApp),
-	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "v", moveToRecordedPositionsAndClickForApp),
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "C", clearRecordedPositionsForApp),
+	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "v", function() moveToRecordedPositionsAndClickForApp(false) end),
+	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "b", function() moveToRecordedPositionsAndClickForApp(true) end),
+	hs.hotkey.bind({ "cmd", "ctrl", "shift", "alt" }, "t",
+		function()
+			shouldClick = not shouldClick
+			local status = shouldClick and "enabled" or "disabled"
+			hs.alert.show("Click functionality " .. status)
+		end),
 }
 local hotkeysEnabled = false
 function toggleAppHotkeys()
