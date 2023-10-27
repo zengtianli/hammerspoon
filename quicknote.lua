@@ -10,7 +10,7 @@ function sendToApp()
 	table.insert(actionQueue,
 		function()
 			hs.eventtap.keyStroke({ "cmd", "ctrl", "shift" }, "x"); hs.timer.doAfter(0.5, runNextAction)
-		end) -- for wechat app
+		end)
 	table.insert(actionQueue, function()
 		hs.eventtap.keyStroke({ "cmd" }, "V"); hs.timer.doAfter(0.5, runNextAction)
 	end)
@@ -40,7 +40,6 @@ end
 
 local quickNoteHotkeyEnabled = false
 local quickNoteHotkey = hs.hotkey.new({ "cmd", "alt" }, "N", quickNoteDialog)
-
 function toggleHotkey()
 	if quickNoteHotkeyEnabled then
 		quickNoteHotkey:disable()

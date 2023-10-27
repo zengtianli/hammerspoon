@@ -27,3 +27,5 @@ hs.hotkey.bind({ "cmd", "shift" }, "l",
 hs.hotkey.bind({ "cmd", "shift" }, "j", function() runShellCommand(shellScripts.swapNextOrFirst, "swapNextOrFirst") end)
 hs.hotkey.bind({ "cmd", "ctrl" }, "f", function() runShellCommand(shellScripts.toggleFullscreen, "toggleFullscreen") end)
 hs.hotkey.bind({ "cmd" }, "j", function() runShellCommand(shellScripts.focusNextOrFirst, "focusNextOrFirst") end)
+-- split
+hs.hotkey.bind({ "cmd", "shift" }, "s", function() runShellCommand(shellScripts.toggleSplit, "toggleSplit") end)

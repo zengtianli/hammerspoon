@@ -2,7 +2,7 @@
 
 local function applicationChanged(appName, eventType, hs, handleNormMode)
 	local appsToHandleNormMode = {
-		"WeChat",
+		-- "WeChat",
 		-- "Arc",
 	}
 

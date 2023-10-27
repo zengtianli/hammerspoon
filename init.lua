@@ -4,7 +4,7 @@ dofile(hs.configdir .. "/keyboard_maestro.lua")
 require "vimlike.vimlike"
 require "recordedPosition"
 require "Clipboard_Manager"
--- require 'quicknote'
+require 'quicknote'
 
 function reloadConfig(files)
 	doReload = false
