@@ -20,12 +20,38 @@ function runShellCommand(command, alertMessage)
 	hs.alert.show("Alert: " .. alertMessage .. ", Output: " .. output .. "\nExit code: " .. exitCode)
 end
 
-hs.hotkey.bind({ "cmd", "shift" }, "y", function() runShellCommand(shellScripts.toggleYabai, "toggleYabai") end)
-hs.hotkey.bind({ "cmd", "shift" }, "w", function() runShellCommand(shellScripts.closeWindow, "closeWindow") end)
-hs.hotkey.bind({ "cmd", "shift" }, "l",
-	function() runShellCommand(shellScripts.toggleFloatingTiling, "toggleFloatingTiling") end)
-hs.hotkey.bind({ "cmd", "shift" }, "j", function() runShellCommand(shellScripts.swapNextOrFirst, "swapNextOrFirst") end)
-hs.hotkey.bind({ "cmd", "ctrl" }, "f", function() runShellCommand(shellScripts.toggleFullscreen, "toggleFullscreen") end)
-hs.hotkey.bind({ "cmd" }, "j", function() runShellCommand(shellScripts.focusNextOrFirst, "focusNextOrFirst") end)
--- split
-hs.hotkey.bind({ "cmd", "shift" }, "s", function() runShellCommand(shellScripts.toggleSplit, "toggleSplit") end)
+local shellHotkeys = {
+	hs.hotkey.new({ "cmd", "shift" }, "y", function() runShellCommand(shellScripts.toggleYabai, "toggleYabai") end),
+	hs.hotkey.new({ "cmd", "shift" }, "w", function() runShellCommand(shellScripts.closeWindow, "closeWindow") end),
+	hs.hotkey.new({ "cmd", "shift" }, "l",
+		function() runShellCommand(shellScripts.toggleFloatingTiling, "toggleFloatingTiling") end),
+	hs.hotkey.new({ "cmd", "shift" }, "j", function() runShellCommand(shellScripts.swapNextOrFirst, "swapNextOrFirst") end),
+	hs.hotkey.new({ "cmd", "ctrl" }, "f", function() runShellCommand(shellScripts.toggleFullscreen, "toggleFullscreen") end),
+	hs.hotkey.new({ "cmd" }, "j", function() runShellCommand(shellScripts.focusNextOrFirst, "focusNextOrFirst") end),
+	hs.hotkey.new({ "cmd", "shift" }, "s", function() runShellCommand(shellScripts.toggleSplit, "toggleSplit") end)
+}
+
+local shellHotkeysEnabled = false
+
+-- Step 2: Create a function that enables or disables these hotkeys
+function toggleYabaiHotkeys()
+	if shellHotkeysEnabled then
+		for _, hotkey in ipairs(shellHotkeys) do
+			hotkey:disable()
+		end
+		shellHotkeysEnabled = false
+		hs.alert.show("Yabai hotkeys disabled")
+	else
+		for _, hotkey in ipairs(shellHotkeys) do
+			hotkey:enable()
+		end
+		shellHotkeysEnabled = true
+		hs.alert.show("Yabai hotkeys enabled")
+	end
+end
+
+-- Enable the shell hotkeys by default (optional)
+toggleYabaiHotkeys()
+
+-- Step 3: Bind a hotkey to toggle the shell script hotkeys on or off
+hs.hotkey.bind({ "cmd", "ctrl", "shift", "alt" }, "y", toggleYabaiHotkeys)

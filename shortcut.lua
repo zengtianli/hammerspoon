@@ -31,6 +31,7 @@ local appHotkeys = {
 		end)
 	end)
 }
+
 local hotkeysEnabled = false
 function toggleAppHotkeys()
 	if hotkeysEnabled then
