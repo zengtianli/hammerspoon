@@ -107,14 +107,14 @@ local appHotkeys = {
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "C", clearRecordedPositionsForApp),
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "v", function() moveToRecordedPositionsAndClickForApp(false) end),
 	hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "b", function() moveToRecordedPositionsAndClickForApp(true) end),
-	hs.hotkey.bind({ "cmd", "ctrl", "shift", "alt" }, "t",
+	hs.hotkey.bind({ "cmd", "ctrl", "shift", "alt" }, "c",
 		function()
 			shouldClick = not shouldClick
 			local status = shouldClick and "enabled" or "disabled"
 			hs.alert.show("Click functionality " .. status)
 		end),
 }
-local hotkeysEnabled = false
+local hotkeysEnabled = true
 function toggleAppHotkeys()
 	if hotkeysEnabled then
 		for _, hotkey in ipairs(appHotkeys) do
@@ -131,4 +131,6 @@ function toggleAppHotkeys()
 	end
 end
 
+-- run toggleAppHotkeys
+toggleAppHotkeys()
 hs.hotkey.bind({ "cmd", "ctrl", "shift", "alt" }, "r", toggleAppHotkeys)

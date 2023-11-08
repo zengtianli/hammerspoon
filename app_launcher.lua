@@ -7,7 +7,7 @@ local appHotkeys = {
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "i", function() hs.application.open("MindNode") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "m", function() hs.application.open("Music") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "n", function() hs.application.open("Notes") end),
-	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "P", function() hs.application.open("Parallels Desktop") end),
+	-- hs.hotkey.new({ "cmd", "ctrl", "shift" }, "P", function() hs.application.open("Parallels Desktop") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "Q", function() hs.application.open("QSpace Pro") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, ".", function() hs.application.open("Visual Studio Code") end),
 	hs.hotkey.new({ "cmd", "ctrl", "shift" }, "W", function() hs.application.open("Warp") end),
