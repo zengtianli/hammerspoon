@@ -6,6 +6,7 @@ require "recordedPosition"
 -- require "Clipboard_Manager"
 require "quicknote"
 require "post"
+-- require "snippets"
 
 function reloadConfig(files)
 	doReload = false
