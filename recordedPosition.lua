@@ -121,13 +121,13 @@ function toggleAppHotkeys()
 			hotkey:disable()
 		end
 		hotkeysEnabled = false
-		hs.alert.show("recorded position disabled")
+		-- hs.alert.show("recorded position disabled")
 	else
 		for _, hotkey in ipairs(appHotkeys) do
 			hotkey:enable()
 		end
 		hotkeysEnabled = true
-		hs.alert.show("recorded position enabled")
+		-- hs.alert.show("recorded position enabled")
 	end
 end
 

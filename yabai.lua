@@ -17,7 +17,7 @@ function runShellCommand(command, alertMessage)
 	else
 		exitCode = tostring(exitCode)
 	end
-	hs.alert.show("Alert: " .. alertMessage .. ", Output: " .. output .. "\nExit code: " .. exitCode)
+	-- hs.alert.show("Alert: " .. alertMessage .. ", Output: " .. output .. "\nExit code: " .. exitCode)
 end
 
 local shellHotkeys = {
@@ -40,13 +40,13 @@ function toggleYabaiHotkeys()
 			hotkey:disable()
 		end
 		shellHotkeysEnabled = false
-		hs.alert.show("Yabai hotkeys disabled")
+		-- hs.alert.show("Yabai hotkeys disabled")
 	else
 		for _, hotkey in ipairs(shellHotkeys) do
 			hotkey:enable()
 		end
 		shellHotkeysEnabled = true
-		hs.alert.show("Yabai hotkeys enabled")
+		-- hs.alert.show("Yabai hotkeys enabled")
 	end
 end
 

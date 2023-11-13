@@ -41,13 +41,13 @@ function toggleAppHotkeys()
 			hotkey:disable()
 		end
 		hotkeysEnabled = false
-		hs.alert.show("App hotkeys disabled")
+		-- hs.alert.show("App hotkeys disabled")
 	else
 		for _, hotkey in ipairs(appHotkeys) do
 			hotkey:enable()
 		end
 		hotkeysEnabled = true
-		hs.alert.show("App hotkeys enabled")
+		-- hs.alert.show("App hotkeys enabled")
 	end
 end
 
