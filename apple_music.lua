@@ -33,7 +33,7 @@ function apple_music_previous_track()
 	end
 end
 
-hs.hotkey.bind({ "cmd", "ctrl", "shift" }, 'l', apple_music_previous_track)
+-- hs.hotkey.bind({ "cmd", "ctrl", "shift" }, 'l', apple_music_previous_track)
 
 -- hs.hotkey.bind({}, 'f8', apple_music_playback)
 -- hs.hotkey.new({ "cmd", "ctrl", "shift" }, "p", function() hs.application.open("PicGo") end)
