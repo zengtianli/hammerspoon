@@ -31,8 +31,6 @@ local vim = VimMode:new()
 -- vim
 vim
 		:disableForApp('Code')
-		:disableForApp('zoom.us')
-		:disableForApp('iTerm')
 		:disableForApp('iTerm2')
 		:disableForApp('Terminal')
 		:disableForApp('Warp')
@@ -49,7 +47,8 @@ vim:shouldShowAlertInNormalMode(true)
 vim:setAlertFont("Courier New")
 
 -- Enter normal mode by typing a key sequence
-vim:enterWithSequence('jk')
+-- vim:enterWithSequence('jk')
+vim:bindHotKeys({ enter = { {}, 'escape' } })
 
 -- if you want to bind a single key to entering vim, remove the
 -- :enterWithSequence('jk') line above and uncomment the bindHotKeys line

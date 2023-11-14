@@ -1,5 +1,8 @@
 function apple_music_playback()
 	local aapl_music = hs.appfinder.appFromName("Music")
+	if not aapl_music then
+		hs.application.launchOrFocus("Music")
+	end
 	local str_pause = { "Controls", "Pause" }
 	local str_play_and_pause = { "Controls", "Play" }
 	local pause = aapl_music:findMenuItem(str_pause)
