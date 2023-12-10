@@ -44,7 +44,7 @@ vim:shouldShowAlertInNormalMode(true)
 vim:setAlertFont("Courier New")
 
 
-vim:bindHotKeys({ enter = { { 'cmd', 'shift', 'ctrl' }, 'escape' } })
+-- vim:bindHotKeys({ enter = { { 'cmd', 'shift', 'ctrl' }, 'escape' } })
 
 --------------------------------
 -- END VIM CONFIG
