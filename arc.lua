@@ -1,4 +1,4 @@
--- 记录当前活动应用并激活arc发送按键，然后返回之前的应用
+-- 记录当前活动应用并激活Safari发送按键，然后返回之前的应用
 function activateArcSendKeyAndReturn(key)
     local previousApp = hs.application.frontmostApplication()
     hs.application.launchOrFocus("Arc")
@@ -8,12 +8,12 @@ function activateArcSendKeyAndReturn(key)
     end)
 end
 
--- 绑定快捷键"cmd ctrl shift ,"来切换到arc并输入左箭头，之后返回之前的应用
+-- 绑定快捷键"cmd ctrl shift ,"来切换到Safari并输入左箭头，之后返回之前的应用
 hs.hotkey.bind({"cmd", "ctrl", "shift"}, ",", function()
     activateArcSendKeyAndReturn("left")
 end)
 
--- 绑定快捷键"cmd ctrl shift ."来切换到arc并输入右箭头，之后返回之前的应用
+-- 绑定快捷键"cmd ctrl shift ."来切换到Safari并输入右箭头，之后返回之前的应用
 hs.hotkey.bind({"cmd", "ctrl", "shift"}, "/", function()
     activateArcSendKeyAndReturn("right")
 end)
