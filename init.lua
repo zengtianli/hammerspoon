@@ -55,3 +55,9 @@ myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConf
 hs.alert.show("Config loaded")
 
 require("rcmd")
+hs.window.filter.default:subscribe(hs.window.filter.windowFocused, function(window)
+    local frame = window:frame()
+    local center = hs.geometry.rectMidPoint(frame)
+    hs.mouse.setAbsolutePosition(center)
+end)
+
