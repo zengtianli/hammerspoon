@@ -8,6 +8,7 @@ require "quicknote"
 require "post"
 require "apple_music"
 require "arc"
+require "mousefollow"
 
 function reloadConfig(files)
 	doReload = false
@@ -21,35 +22,35 @@ function reloadConfig(files)
 	end
 end
 
---------------------------------
--- START VIM CONFIG
---------------------------------
-local VimMode = hs.loadSpoon("VimMode")
-local vim = VimMode:new()
-
-vim
-		:disableForApp('Warp')
-		:disableForApp('Code')
-		:disableForApp('iTerm2')
-		:disableForApp('Terminal')
-
--- If you want the screen to dim (a la Flux) when you enter normal mode
--- flip this to true.
-vim:shouldDimScreenInNormalMode(false)
-
--- If you want to show an on-screen alert when you enter normal mode, set
--- this to true
-vim:shouldShowAlertInNormalMode(true)
-
--- You can configure your on-screen alert font
-vim:setAlertFont("Courier New")
-
-
--- vim:bindHotKeys({ enter = { { 'cmd', 'shift', 'ctrl' }, 'escape' } })
-
---------------------------------
--- END VIM CONFIG
---------------------------------
+-- --------------------------------
+-- -- START VIM CONFIG
+-- --------------------------------
+-- local VimMode = hs.loadSpoon("VimMode")
+-- local vim = VimMode:new()
+--
+-- vim
+-- 		:disableForApp('Warp')
+-- 		:disableForApp('Code')
+-- 		:disableForApp('iTerm2')
+-- 		:disableForApp('Terminal')
+--
+-- -- If you want the screen to dim (a la Flux) when you enter normal mode
+-- -- flip this to true.
+-- vim:shouldDimScreenInNormalMode(false)
+--
+-- -- If you want to show an on-screen alert when you enter normal mode, set
+-- -- this to true
+-- vim:shouldShowAlertInNormalMode(true)
+--
+-- -- You can configure your on-screen alert font
+-- vim:setAlertFont("Courier New")
+--
+--
+-- -- vim:bindHotKeys({ enter = { { 'cmd', 'shift', 'ctrl' }, 'escape' } })
+--
+-- --------------------------------
+-- -- END VIM CONFIG
+-- --------------------------------
 
 myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 hs.alert.show("Config loaded")
