@@ -54,3 +54,9 @@ end
 
 myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 hs.alert.show("Config loaded")
+
+hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "p", function()
+    hs.eventtap.event.newSystemKeyEvent("PLAY", true):post()
+    hs.eventtap.event.newSystemKeyEvent("PLAY", false):post()
+end)
+
