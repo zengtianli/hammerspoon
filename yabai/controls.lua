@@ -5,6 +5,7 @@ local shellScripts = {
 	increase_window = yabaiScriptsDir .. "/increase_window.sh",
 	decrease_window = yabaiScriptsDir .. "/decrease_window.sh",
 	toggleFloatingTiling = yabaiScriptsDir .. "/toggle-display-center-floating-tiling3.sh",
+	displayNextOrFirst = yabaiScriptsDir .. "/swap_display.sh",
 	closeWindow = "yabai -m window --close",
 	restartyabai = "yabai --restart-service; sleep 2; yabai -m rule --apply",
 	toggleFullscreen = "yabai -m window --toggle zoom-fullscreen",
@@ -23,12 +24,13 @@ end
 
 local hotkeyConfig = {
     { mods = { "cmd", "shift" }, key = "y", script = shellScripts.toggleYabai },
+    { mods = { "cmd", "shift" }, key = "r", script = shellScripts.restartyabai },
     { mods = { "cmd", "shift" }, key = "=", script = shellScripts.increase_window },
     { mods = { "cmd", "shift" }, key = "-", script = shellScripts.decrease_window },
     { mods = { "cmd", "shift" }, key = "w", script = shellScripts.closeWindow },
-    { mods = { "cmd", "shift" }, key = "r", script = shellScripts.restartyabai },
     { mods = { "cmd", "shift" }, key = "l", script = shellScripts.toggleFloatingTiling },
     { mods = { "cmd", "shift" }, key = "j", script = shellScripts.swapNextOrFirst },
+    { mods = { "cmd", "shift" }, key = "k", script = shellScripts.displayNextOrFirst },
     { mods = { "cmd", "alt" }, key = "f", script = shellScripts.toggleFullscreen },
     { mods = { "cmd", "alt" }, key = "j", script = shellScripts.focusNextOrFirst },
     { mods = { "cmd", "shift" }, key = "s", script = shellScripts.toggleSplit }

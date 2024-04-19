@@ -28,4 +28,4 @@ function toggleKeyDetector()
 	end
 end
 
-hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "D", toggleKeyDetector)
+hs.hotkey.bind({ "cmd","alt", "ctrl", "shift" }, "D", toggleKeyDetector)
