@@ -7,6 +7,8 @@ hs.hotkey.bind({"cmd", "shift"}, "Q", function()
   -- Wait for the application to quit
   hs.timer.doAfter(1, function()
     hs.application.launchOrFocus(appName)
+
+	hs.alert.show(appName)
   end)
 end)
 
