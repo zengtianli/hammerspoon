@@ -16,9 +16,9 @@ function requireAllFromDirectory(directory)
         end
     end
 end
-requireAllFromDirectory("launcher")
-requireAllFromDirectory("yabai")
-requireAllFromDirectory("utils")
+requireAllFromDirectory("03_launcher")
+requireAllFromDirectory("10_yabai")
+requireAllFromDirectory("08_utils")
 -- 配置文件自动重载功能
 function reloadConfig(files)
     local doReload = false
