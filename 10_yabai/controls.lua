@@ -12,6 +12,8 @@ local shellScripts = {
 	toggleSplit = "yabai -m window --toggle split",
 	swapNextOrFirst = "yabai -m window --swap next || yabai -m window --swap first",
 	focusNextOrFirst = "yabai -m window --focus next || yabai -m window --focus first",
+	moveWindowToNextSpace = yabaiScriptsDir .. "/move_window_to_next_space.sh",
+	moveoNextSpace = yabaiScriptsDir .. "/move_to_next_space.sh",
 }
 
 function runShellCommand(command)
@@ -33,6 +35,9 @@ local hotkeyConfig = {
     { mods = { "cmd", "shift" }, key = "k", script = shellScripts.displayNextOrFirst },
     { mods = { "cmd", "alt" }, key = "f", script = shellScripts.toggleFullscreen },
     { mods = { "cmd", "alt" }, key = "j", script = shellScripts.focusNextOrFirst },
+    { mods = { "cmd", "alt" }, key = "l", script = shellScripts.moveWindowToNextSpace },
+    { mods = { "cmd", "alt" }, key = "k", script = shellScripts.moveoNextSpace },
+    { mods = { "cmd", "alt" }, key = "h", script = shellScripts.moveWindowToprevSpace },
     { mods = { "cmd", "shift" }, key = "s", script = shellScripts.toggleSplit }
 }
 
