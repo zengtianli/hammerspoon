@@ -20,6 +20,7 @@ local clipboardWatcher = pasteboard.watcher.new(function()
         lastChange = currentChange
         local content = pasteboard.getContents()
         if content then appendToFile(content) end
+				hs.alert.show("Copied: " .. content)
     end
 end)
 

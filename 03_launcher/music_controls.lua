@@ -36,10 +36,6 @@ function apple_music_previous_track()
 	end
 end
 
--- hs.hotkey.bind({ "cmd", "ctrl", "shift" }, 'l', apple_music_previous_track)
-
--- hs.hotkey.bind({}, 'f8', apple_music_playback)
--- hs.hotkey.new({ "cmd", "ctrl", "shift" }, "p", function() hs.application.open("PicGo") end)
 -- Volume Control in Apple Music.app
 function apple_music_volume(direction)
 	return function()
@@ -49,8 +45,8 @@ function apple_music_volume(direction)
 	end
 end
 
-hs.hotkey.bind({ "cmd", "ctrl" }, 'up', apple_music_volume("Increase Volume"))
-hs.hotkey.bind({ "cmd", "ctrl" }, 'down', apple_music_volume("Decrease Volume"))
+-- hs.hotkey.bind({ "cmd", "ctrl" }, 'up', apple_music_volume("Increase Volume"))
+-- hs.hotkey.bind({ "cmd", "ctrl" }, 'down', apple_music_volume("Decrease Volume"))
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "p", function()
     hs.eventtap.event.newSystemKeyEvent("PLAY", true):post()
     hs.eventtap.event.newSystemKeyEvent("PLAY", false):post()

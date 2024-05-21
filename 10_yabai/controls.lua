@@ -13,7 +13,9 @@ local shellScripts = {
 	swapNextOrFirst = "yabai -m window --swap next || yabai -m window --swap first",
 	focusNextOrFirst = "yabai -m window --focus next || yabai -m window --focus first",
 	moveWindowToNextSpace = yabaiScriptsDir .. "/move_window_to_next_space.sh",
-	moveoNextSpace = yabaiScriptsDir .. "/move_to_next_space.sh",
+	-- moveoNextSpace = yabaiScriptsDir .. "/move_to_next_space.sh",
+	-- moveWindowToNextDisplay = yabaiScriptsDir .. "/move_window_next_display.sh",
+	moveWindowToNextDisplay = "yabai -m window --display next || yabai -m window --display first; yabai -m display --focus next || yabai -m display --focus first",
 }
 
 function runShellCommand(command)
@@ -25,8 +27,8 @@ function runShellCommand(command)
 end
 
 local hotkeyConfig = {
-    { mods = { "cmd", "shift" }, key = "y", script = shellScripts.toggleYabai },
-    { mods = { "cmd", "shift" }, key = "r", script = shellScripts.restartyabai },
+    -- { mods = { "cmd", "shift" }, key = "y", script = shellScripts.toggleYabai },
+    -- { mods = { "cmd", "shift" }, key = "r", script = shellScripts.restartyabai },
     { mods = { "cmd", "shift" }, key = "=", script = shellScripts.increase_window },
     { mods = { "cmd", "shift" }, key = "-", script = shellScripts.decrease_window },
     { mods = { "cmd", "shift" }, key = "w", script = shellScripts.closeWindow },
@@ -36,9 +38,10 @@ local hotkeyConfig = {
     { mods = { "cmd", "alt" }, key = "f", script = shellScripts.toggleFullscreen },
     { mods = { "cmd", "alt" }, key = "j", script = shellScripts.focusNextOrFirst },
     { mods = { "cmd", "alt" }, key = "l", script = shellScripts.moveWindowToNextSpace },
-    { mods = { "cmd", "alt" }, key = "k", script = shellScripts.moveoNextSpace },
+    -- { mods = { "cmd", "alt" }, key = "k", script = shellScripts.moveoNextSpace },
+    { mods = { "cmd", "alt" }, key = "k", script = shellScripts.moveWindowToNextDisplay },
     { mods = { "cmd", "alt" }, key = "h", script = shellScripts.moveWindowToprevSpace },
-    { mods = { "cmd", "shift" }, key = "s", script = shellScripts.toggleSplit }
+    { mods = { "cmd", "shift" }, key = "o", script = shellScripts.toggleSplit }
 }
 
 -- Function to create hotkeys from the configuration

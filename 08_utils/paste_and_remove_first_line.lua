@@ -33,5 +33,6 @@ end
 hs.hotkey.bind({"ctrl", "cmd"}, "v", function()
     pasteAndRemoveFirstLine()
     hs.alert.show("Pasted and removed the first line")
+		-- simulate past action like cmd v
 end)
 
