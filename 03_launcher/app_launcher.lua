@@ -3,7 +3,7 @@ local ScriptsDir = "/Users/tianli/.hammerspoon/05_scripts"
 local UserfulDir = "/Users/tianli/useful_scripts"
 local appBindings = {
     { mods = {"cmd", "ctrl", "shift"}, key = "t", app = ScriptsDir .. "/warp.sh", isExecute = true },
-    { mods = {"cmd", "ctrl", "shift"}, key = "f", app = UserfulDir .. "/toggle_fn_keys.sh", isExecute = true },
+    -- { mods = {"cmd", "ctrl", "shift"}, key = "f", app = UserfulDir .. "/toggle_fn_keys.sh", isExecute = true },
     { mods = {"cmd", "ctrl", "alt", "shift"}, key = "o", app =ScriptsDir .. "/obs.sh", isExecute = true },
     { mods = {"cmd", "option"}, key = ",", app = "System Settings" },
     { mods = {"cmd", "ctrl", "shift"}, key = "l", app = "ClashX Pro", mode = "rule" },

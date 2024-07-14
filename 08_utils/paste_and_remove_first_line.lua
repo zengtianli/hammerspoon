@@ -30,9 +30,9 @@ local function pasteAndRemoveFirstLine()
 end
 
 -- Keybinding to trigger the function
-hs.hotkey.bind({"ctrl", "cmd"}, "v", function()
-    pasteAndRemoveFirstLine()
-    hs.alert.show("Pasted and removed the first line")
-		-- simulate past action like cmd v
-end)
+-- hs.hotkey.bind({"ctrl", "cmd"}, "v", function()
+--     pasteAndRemoveFirstLine()
+--     hs.alert.show("Pasted and removed the first line")
+-- 		-- simulate past action like cmd v
+-- end)
 

@@ -19,6 +19,7 @@ end
 requireAllFromDirectory("03_launcher")
 requireAllFromDirectory("10_yabai")
 requireAllFromDirectory("08_utils")
+-- requireAllFromDirectory("temp")
 -- 配置文件自动重载功能
 function reloadConfig(files)
     local doReload = false
