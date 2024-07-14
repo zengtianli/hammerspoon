@@ -1,18 +1,26 @@
 function apple_music_playback()
-	local aapl_music = hs.appfinder.appFromName("Music")
-	if not aapl_music then
-		hs.application.launchOrFocus("Music")
-	end
-	local str_pause = { "Controls", "Pause" }
-	local str_play_and_pause = { "Controls", "Play" }
-	local pause = aapl_music:findMenuItem(str_pause)
-	local play_and_pause = aapl_music:findMenuItem(str_play_and_pause)
-	if (pause) then
-		aapl_music:selectMenuItem(str_pause)
-	end
-	if (play_and_pause) then
-		aapl_music:selectMenuItem(str_play_and_pause)
-	end
+    local aapl_music = hs.appfinder.appFromName("Music")
+    if not aapl_music then
+        -- 运行 ~/useful_scripts/music.applescript 文件
+        hs.osascript.applescriptFromFile(os.getenv("HOME") .. "/useful_scripts/music.applescript")
+        -- 给一些时间让脚本执行并可能启动 Music 应用
+        hs.timer.usleep(500000)  -- 暂停 0.5 秒
+        aapl_music = hs.appfinder.appFromName("Music")
+    end
+    
+    -- 如果 Music 应用现在存在，继续执行原来的逻辑
+    if aapl_music then
+        local str_pause = { "Controls", "Pause" }
+        local str_play_and_pause = { "Controls", "Play" }
+        local pause = aapl_music:findMenuItem(str_pause)
+        local play_and_pause = aapl_music:findMenuItem(str_play_and_pause)
+        if (pause) then
+            aapl_music:selectMenuItem(str_pause)
+        end
+        if (play_and_pause) then
+            aapl_music:selectMenuItem(str_play_and_pause)
+        end
+    end
 end
 
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, ';', apple_music_playback)
