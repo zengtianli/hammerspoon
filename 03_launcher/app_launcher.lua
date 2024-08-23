@@ -6,7 +6,7 @@ local appBindings = {
     -- { mods = {"cmd", "ctrl", "shift"}, key = "f", app = UserfulDir .. "/toggle_fn_keys.sh", isExecute = true },
     { mods = {"cmd", "ctrl", "alt", "shift"}, key = "o", app =ScriptsDir .. "/obs.sh", isExecute = true },
     { mods = {"cmd", "option"}, key = ",", app = "System Settings" },
-    { mods = {"cmd", "ctrl", "shift"}, key = "l", app = "ClashX Pro", mode = "rule" },
+    -- { mods = {"cmd", "ctrl", "shift"}, key = "l", app = "ClashX Pro", mode = "rule" },
     { mods = {"cmd", "ctrl", "shift"}, key = "g", app = "ClashX Pro", mode = "global" }
 }
 

@@ -3,11 +3,9 @@ function apple_music_playback()
     if not aapl_music then
         -- 运行 ~/useful_scripts/music.applescript 文件
         hs.osascript.applescriptFromFile(os.getenv("HOME") .. "/useful_scripts/music.applescript")
-        -- 给一些时间让脚本执行并可能启动 Music 应用
         hs.timer.usleep(500000)  -- 暂停 0.5 秒
         aapl_music = hs.appfinder.appFromName("Music")
     end
-    
     -- 如果 Music 应用现在存在，继续执行原来的逻辑
     if aapl_music then
         local str_pause = { "Controls", "Pause" }
@@ -22,9 +20,7 @@ function apple_music_playback()
         end
     end
 end
-
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, ';', apple_music_playback)
-
 function apple_music_next_track()
 	local aapl_music = hs.appfinder.appFromName("Music")
 	local next_track = { "Controls", "Next Track" }
@@ -33,7 +29,6 @@ function apple_music_next_track()
 		aapl_music:selectMenuItem(next_track)
 	end
 end
-
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, '\'', apple_music_next_track)
 function apple_music_previous_track()
 	local aapl_music = hs.appfinder.appFromName("Music")
@@ -43,7 +38,6 @@ function apple_music_previous_track()
 		aapl_music:selectMenuItem(previous_track)
 	end
 end
-
 -- Volume Control in Apple Music.app
 function apple_music_volume(direction)
 	return function()
@@ -52,11 +46,19 @@ function apple_music_volume(direction)
 		aapl_music:selectMenuItem({ "Controls", direction })
 	end
 end
-
--- hs.hotkey.bind({ "cmd", "ctrl" }, 'up', apple_music_volume("Increase Volume"))
--- hs.hotkey.bind({ "cmd", "ctrl" }, 'down', apple_music_volume("Decrease Volume"))
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "p", function()
     hs.eventtap.event.newSystemKeyEvent("PLAY", true):post()
     hs.eventtap.event.newSystemKeyEvent("PLAY", false):post()
 end)
+function toggle_airpods_noise()
+    local script_path = os.getenv("HOME") .. "/useful_scripts/airpods.scpt"
+    local output, status, type, rc = hs.osascript.applescriptFromFile(script_path)
+    if status then
+        hs.alert.show("切换到: " .. output)
+    else
+        hs.alert.show("切换失败")
+    end
+end
 
+-- 绑定快捷键 Cmd+Ctrl+Shift+A 来切换 AirPods 噪音控制模式
+hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "l", toggle_airpods_noise) 
