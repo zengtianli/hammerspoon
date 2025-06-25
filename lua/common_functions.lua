@@ -12,7 +12,19 @@ M.scripts = {
             M.showError("脚本文件不存在: " .. scriptName)
             return false
         end
-        local task = hs.task.new("/bin/bash", callback, { scriptPath })
+
+        local executor, args
+        if scriptName:match("%.applescript$") then
+            -- AppleScript 文件使用 osascript 执行
+            executor = "/usr/bin/osascript"
+            args = { scriptPath }
+        else
+            -- 其他脚本文件（如 .sh）使用 bash 执行
+            executor = "/bin/bash"
+            args = { scriptPath }
+        end
+
+        local task = hs.task.new(executor, callback, args)
         task:start()
         return task
     end
