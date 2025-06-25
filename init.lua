@@ -16,9 +16,11 @@ function requireAllFromDirectory(directory)
         end
     end
 end
-requireAllFromDirectory("03_launcher")
-requireAllFromDirectory("10_yabai")
-requireAllFromDirectory("08_utils")
+
+-- requireAllFromDirectory("03_launcher")
+-- requireAllFromDirectory("10_yabai")
+-- requireAllFromDirectory("08_utils")
+requireAllFromDirectory("lua")
 -- requireAllFromDirectory("temp")
 -- 配置文件自动重载功能
 function reloadConfig(files)
@@ -33,5 +35,6 @@ function reloadConfig(files)
         hs.reload()
     end
 end
+
 myWatcher = hs.pathwatcher.new(hs.configdir .. "/", reloadConfig):start()
 hs.alert.show("Config Loaded")
