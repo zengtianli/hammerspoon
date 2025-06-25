@@ -1,25 +1,18 @@
 local common = require("lua.common_functions")
 local M = common.createAppModule("音乐控制", "Music")
 
-
-
 function M.togglePlayback()
-    -- 使用更简单的检查方式
     local runningApps = hs.application.runningApplications()
     local musicIsRunning = false
-
     for _, app in ipairs(runningApps) do
         if app:name() == "Music" then
             musicIsRunning = true
             break
         end
     end
-
     if musicIsRunning then
-        -- Music 已运行，使用系统播放控制
         M.systemPlayPause()
     else
-        -- Music 未运行，执行脚本启动
         local scriptPath = "/Users/tianli/useful_scripts/run_music.sh"
         hs.task.new("/bin/bash", nil, { scriptPath }):start()
     end
@@ -54,5 +47,4 @@ end
 if M.config.enabled then
     M:init()
 end
-
 return M

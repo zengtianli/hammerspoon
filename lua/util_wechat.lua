@@ -7,7 +7,7 @@ function M.launchWechat()
         hs.eventtap.keyStroke({}, "return")
         return true
     end
-    
+
     local success = M:launch()
     if success then
         hs.timer.doAfter(1.0, function()
@@ -21,17 +21,17 @@ function M.launchWechat()
 end
 
 function M.checkDeps()
-    return common.checkModule("hs.application") and 
-           common.checkModule("hs.hotkey") and 
-           common.checkModule("hs.eventtap")
+    return common.checkModule("hs.application") and
+        common.checkModule("hs.hotkey") and
+        common.checkModule("hs.eventtap")
 end
 
 function M.setupHotkeys()
-    M:addHotkey({"ctrl", "alt"}, "W", M.launchWechat, "启动微信")
+    M:addHotkey({ "ctrl", "alt" }, "W", M.launchWechat, "启动微信")
 end
 
-if M.config.enabled then 
-    M:init() 
+if M.config.enabled then
+    M:init()
 end
 
 return M
