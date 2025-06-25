@@ -2,7 +2,9 @@ local common = require("lua.common_functions")
 local M = common.createAppModule("微信工具", "WeChat")
 function M.launchWechat()
     if M:isRunning() then
-        common.showInfo("微信已在运行"); return true
+        hs.application.launchOrFocus("WeChat")
+        hs.eventtap.keyStroke({}, "return")
+        return true
     end
     common.showProcessing("正在启动微信...")
     local success = M:launch()
