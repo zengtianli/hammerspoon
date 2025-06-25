@@ -1,2 +1,2 @@
 #!/bin/bash
-osascript /Users/tianli/useful_scripts/music.applescript
+osascript /Users/tianli/.config/hammerspoon/scripts/music.applescript
