@@ -29,8 +29,14 @@ function M.systemPlayPause()
     hs.eventtap.event.newSystemKeyEvent("PLAY", false):post()
 end
 
+function M.checkDeps()
+    return common.checkModule("hs.hotkey") and
+        common.checkModule("hs.task") and
+        common.checkModule("hs.eventtap")
+end
+
 function M.setupHotkeys()
-    M:addHotkey({ "cmd", "ctrl", "shift" }, ";", M.togglePlayback, "音乐应用播放/暂停")
+    M:addHotkey({ "cmd", "ctrl", "shift" }, ";", M.togglePlayback, "音乐播放/暂停")
     M:addHotkey({ "cmd", "ctrl", "shift" }, "'", M.nextTrack, "下一首")
     M:addHotkey({ "cmd", "ctrl", "shift" }, "l", M.previousTrack, "上一首")
     M:addHotkey({ "cmd", "ctrl", "shift" }, "z", M.zenPlayToggle, "Zen Browser 媒体控制")
@@ -40,4 +46,5 @@ end
 if M.config.enabled then
     M:init()
 end
+
 return M
