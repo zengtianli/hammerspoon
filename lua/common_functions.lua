@@ -25,6 +25,8 @@ M.scripts = {
         end
 
         local task = hs.task.new(executor, callback, args)
+        -- 设置工作目录为脚本目录，确保相对路径正确
+        task:setWorkingDirectory(M.scripts.basePath)
         task:start()
         return task
     end
