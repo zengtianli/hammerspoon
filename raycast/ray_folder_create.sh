@@ -5,28 +5,14 @@
 # @raycast.mode silent
 # @raycast.icon 📁
 # @raycast.packageName Custom
-# @raycast.description Create a new folder in the selected folder
+# @raycast.description Create a new folder in current Finder location (like macOS default)
 
 # 引入通用函数库
 source "/Users/tianli/useful_scripts/execute/raycast/common_functions.sh"
 
-# 获取选中的项目
-SELECTED_ITEM=$(get_finder_selection_single)
-
-# 如果没有选中任何文件/文件夹，则退出
-if [ -z "$SELECTED_ITEM" ]; then
-    show_error "没有在Finder中选择任何文件或文件夹"
-    exit 1
-fi
-
-# 确定目标目录
-if [ -d "$SELECTED_ITEM" ]; then
-    # 如果选中的是文件夹，直接使用该文件夹
-    TARGET_DIR="$SELECTED_ITEM"
-else
-    # 如果选中的是文件，使用其所在的文件夹
-    TARGET_DIR=$(dirname "$SELECTED_ITEM")
-fi
+# 获取目标目录（参考 ray_app_terminal.sh 的逻辑）
+TARGET_DIR=$(get_finder_current_dir)
+LOCATION_DESC="当前位置"
 
 # 设置默认文件夹名称
 BASE_NAME="untitled folder"
@@ -60,4 +46,4 @@ end tell
 EOF
 
 # 显示成功通知
-show_success "已在 \"$(basename "$TARGET_DIR")\" 中创建文件夹 \"$NEW_FOLDER_NAME\""
+show_success "已在 $LOCATION_DESC 中创建文件夹 \"$NEW_FOLDER_NAME\""

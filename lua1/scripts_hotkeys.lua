@@ -1,4 +1,6 @@
 local scripts = require("lua1.scripts_caller")
+local apps = require("lua1.app_controls")
+local runner = require("lua1.script_runner")
 -- ===== 文件转换热键 =====
 -- CSV/Excel转换热键组合 (⌘⌥⇧ + 字母)
 local convert_hotkeys = {
@@ -30,22 +32,38 @@ local file_hotkeys = {
 -- ===== 应用管理热键 =====
 local manage_hotkeys = {
     { { "cmd", "ctrl", "alt", "shift" }, "l", "启动应用", function() scripts.manage.launch_apps() end },
-    { { "cmd", "ctrl", "shift" }, "p", "Python包管理", function() scripts.manage.pip_packages() end },
+    { { "cmd", "ctrl", "alt", "shift" }, "p", "Python包管理", function() scripts.manage.pip_packages() end },
+}
+
+-- ===== 应用控制热键 =====
+local app_hotkeys = {
+    { { "cmd", "ctrl", "shift" }, "t", "Ghostty在此处打开", function() apps.open_ghostty_here() end },
+    -- { { "cmd", "alt", "shift" }, "t", "Terminal在此处打开", function() apps.open_terminal_here() end },
+    -- { { "cmd", "alt", "shift" }, "v", "VS Code在此处打开", function() apps.open_vscode_here() end },
+    { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", function() apps.open_cursor_here() end },
+    { { "cmd", "ctrl", "shift" }, "v", "Nvim在Ghostty中打开文件", function() apps.open_file_in_nvim_ghostty() end },
+    { { "cmd", "shift" }, "n", "创建新文件夹", function() apps.create_folder() end },
+}
+
+-- ===== 脚本运行热键 =====
+local script_hotkeys = {
+    { { "cmd", "ctrl", "shift" }, "s", "运行选中脚本", function() runner.run_single() end },
+    { { "cmd", "ctrl", "shift" }, "r", "并行运行脚本", function() runner.run_parallel() end },
 }
 
 -- ===== 测试热键 =====
 local test_hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "t", "测试脚本功能", function()
-        hs.alert.show("测试 Python 版本检查...")
-        -- 测试一个简单的Python脚本
-        scripts.utils.execute_script("convert_csv_to_txt.py", { "--help" }, function(exit_code, stdout, stderr)
-            if exit_code == 0 then
-                hs.alert.show("Python 脚本测试成功！")
-            else
-                hs.alert.show("Python 脚本测试失败: " .. tostring(exit_code))
-            end
-        end)
-    end },
+    -- { { "cmd", "ctrl", "shift" }, "t", "测试脚本功能", function()
+    --     hs.alert.show("测试 Python 版本检查...")
+    --     -- 测试一个简单的Python脚本
+    --     scripts.utils.execute_script("convert_csv_to_txt.py", { "--help" }, function(exit_code, stdout, stderr)
+    --         if exit_code == 0 then
+    --             hs.alert.show("Python 脚本测试成功！")
+    --         else
+    --             hs.alert.show("Python 脚本测试失败: " .. tostring(exit_code))
+    --         end
+    --     end)
+    -- end },
 }
 -- ===== 智能上下文菜单 =====
 -- 根据选中文件类型显示不同的转换选项
@@ -156,7 +174,7 @@ end
 local function register_hotkeys()
     local all_hotkeys = {}
     -- 合并所有热键
-    for _, hotkey_group in ipairs({ convert_hotkeys, extract_hotkeys, file_hotkeys, manage_hotkeys, test_hotkeys }) do
+    for _, hotkey_group in ipairs({ convert_hotkeys, extract_hotkeys, file_hotkeys, manage_hotkeys, app_hotkeys, script_hotkeys, test_hotkeys }) do
         for _, hotkey in ipairs(hotkey_group) do
             table.insert(all_hotkeys, hotkey)
         end
@@ -207,9 +225,13 @@ function scripts_hotkeys.show_help()
 📁 文件管理 (⌘⌃⌥ + 字母):
   U: 文件上移    C: 合并CSV
   M: 合并Markdown
-⚙️ 系统管理 (⌘⌃⇧ + 字母):
-  L: 启动应用    P: Python包管理
-  T: 测试脚本功能
+⚙️ 系统管理:
+  ⌘⌃⌥⇧+L: 启动应用  ⌘⌃⇧+P: Python包管理
+📱 应用控制 (⌘⌃⇧ + 字母):
+  T: Ghostty在此处打开  W: Cursor在此处打开
+  V: Nvim在Ghostty中打开文件  N: 创建新文件夹
+🏃 脚本运行 (⌘⌃⇧ + 字母):
+  S: 运行选中脚本  R: 并行运行脚本
 🎛️ 智能菜单:
   ⌘⌃⌥ + Space: 智能转换菜单
 ]]
