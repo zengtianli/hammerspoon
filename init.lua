@@ -21,6 +21,7 @@ end
 -- requireAllFromDirectory("10_yabai")
 -- requireAllFromDirectory("08_utils")
 requireAllFromDirectory("lua")
+requireAllFromDirectory("lua1")
 -- requireAllFromDirectory("temp")
 -- 配置文件自动重载功能
 function reloadConfig(files)
