@@ -38,8 +38,6 @@ local manage_hotkeys = {
 -- ===== 应用控制热键 =====
 local app_hotkeys = {
     { { "cmd", "ctrl", "shift" }, "t", "Ghostty在此处打开", function() apps.open_ghostty_here() end },
-    -- { { "cmd", "alt", "shift" }, "t", "Terminal在此处打开", function() apps.open_terminal_here() end },
-    -- { { "cmd", "alt", "shift" }, "v", "VS Code在此处打开", function() apps.open_vscode_here() end },
     { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", function() apps.open_cursor_here() end },
     { { "cmd", "ctrl", "shift" }, "v", "Nvim在Ghostty中打开文件", function() apps.open_file_in_nvim_ghostty() end },
     { { "cmd", "shift" }, "n", "创建新文件夹", function() apps.create_folder() end },
