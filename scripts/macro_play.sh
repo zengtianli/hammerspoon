@@ -41,18 +41,11 @@ done < "$RECORD_FILE"
 # 等待一下让最后一个操作完成
 sleep 0.5
 
-# 获取第一个录制的位置
-FIRST_POS=$(head -n 1 "$RECORD_FILE")
-if [ -n "$FIRST_POS" ]; then
-    echo "回到录制的第一个位置: $FIRST_POS"
-    FIRST_X=$(echo "$FIRST_POS" | cut -d',' -f1)
-    FIRST_Y=$(echo "$FIRST_POS" | cut -d',' -f2)
-    cliclick m:$FIRST_X,$FIRST_Y
-else
-    # 如果没有录制位置，回到播放开始时的位置
-    echo "回到播放开始时的位置: $ORIGINAL_POS"
-    cliclick m:$ORIGINAL_POS
-fi
+# 回到播放开始时的原始位置
+echo "回到原始位置: $ORIGINAL_POS"
+ORIG_X=$(echo "$ORIGINAL_POS" | cut -d',' -f1)
+ORIG_Y=$(echo "$ORIGINAL_POS" | cut -d',' -f2)
+cliclick m:$ORIG_X,$ORIG_Y
 
 echo "宏播放完成"
 osascript -e 'display notification "宏播放完成" with title "宏播放"' 
