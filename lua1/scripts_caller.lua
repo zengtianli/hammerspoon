@@ -1,202 +1,117 @@
-local scripts_caller = {}
 local utils = require("lua1.common_utils")
 
--- 配置路径
+-- 配置
 local config = {
     python_path = "/Users/tianli/miniforge3/bin/python3",
     bash_path = "/bin/bash",
     scripts_dir = hs.configdir .. "/scripts_ray",
+}
 
-    scripts = {
-        -- 转换类脚本
-        convert_csv_to_txt = "convert_csv_to_txt.py",
-        convert_csv_to_xlsx = "convert_csv_to_xlsx.py",
-        convert_txt_to_csv = "convert_txt_to_csv.py",
-        convert_txt_to_xlsx = "convert_txt_to_xlsx.py",
-        convert_xlsx_to_csv = "convert_xlsx_to_csv.py",
-        convert_xlsx_to_txt = "convert_xlsx_to_txt.py",
-        convert_docx_to_md = "convert_docx_to_md.sh",
-        convert_office_batch = "convert_office_batch.sh",
-        convert_pptx_to_md = "convert_pptx_to_md.py",
-
-        -- 提取类脚本
-        extract_images_office = "extract_images_office.py",
-        extract_tables_office = "extract_tables_office.py",
-        extract_text_tokens = "extract_text_tokens.py",
-
-        -- 管理类脚本
-        manage_app_launcher = "manage_app_launcher.sh",
-        manage_pip_packages = "manage_pip_packages.sh",
-
-        -- 文件操作类脚本
-        file_move_up_level = "file_move_up_level.sh",
-
-        -- 合并类脚本
-        merge_csv_files = "merge_csv_files.sh",
-        merge_markdown_files = "merge_markdown_files.sh"
-    }
+-- 脚本映射表
+local scripts = {
+    convert_csv_to_txt = "convert_csv_to_txt.py",
+    convert_csv_to_xlsx = "convert_csv_to_xlsx.py",
+    convert_txt_to_csv = "convert_txt_to_csv.py",
+    convert_txt_to_xlsx = "convert_txt_to_xlsx.py",
+    convert_xlsx_to_csv = "convert_xlsx_to_csv.py",
+    convert_xlsx_to_txt = "convert_xlsx_to_txt.py",
+    convert_docx_to_md = "convert_docx_to_md.sh",
+    convert_office_batch = "convert_office_batch.sh",
+    convert_pptx_to_md = "convert_pptx_to_md.py",
+    extract_images_office = "extract_images_office.py",
+    extract_tables_office = "extract_tables_office.py",
+    extract_text_tokens = "extract_text_tokens.py",
+    manage_app_launcher = "manage_app_launcher.sh",
+    manage_pip_packages = "manage_pip_packages.sh",
+    file_move_up_level = "file_move_up_level.sh",
+    merge_csv_files = "merge_csv_files.sh",
+    merge_markdown_files = "merge_markdown_files.sh"
 }
 
 -- 通用执行函数
 local function execute_script(script_name, args, callback)
-    local script_path = config.scripts_dir .. "/" .. script_name
-    local cmd = script_name:match("%.py$") and config.python_path or config.bash_path
-
-    utils.debug_print("Script Execution Debug", {
-        script_name = script_name,
-        script_path = script_path,
-        command = cmd,
-        working_directory = config.scripts_dir,
-        file_exists = hs.fs.attributes(script_path, "mode") ~= nil
-    })
-
+    local script_path = config.scripts_dir .. "/" .. scripts[script_name]
+    local cmd = script_path:match("%.py$") and config.python_path or config.bash_path
     local arguments = { script_path }
-    if args then
-        for _, arg in ipairs(args) do
-            table.insert(arguments, arg)
-        end
-    end
 
-    local task = hs.task.new(cmd, function(exit_code, stdout, stderr)
+    if args then for _, arg in ipairs(args) do table.insert(arguments, arg) end end
+
+    utils.debug_print("Script Execution",
+        { script_name, script_path, cmd, file_exists = hs.fs.attributes(script_path, "mode") ~= nil })
+
+    hs.task.new(cmd, function(exit_code, stdout, stderr)
         if callback then
             callback(exit_code, stdout, stderr)
+        elseif exit_code == 0 then
+            utils.show_success_notification("脚本执行成功", script_name .. " 执行完成")
         else
-            if exit_code == 0 then
-                utils.show_success_notification("脚本执行成功", script_name .. " 执行完成")
-            else
-                utils.show_error_notification("脚本执行失败", stderr or "未知错误: " .. tostring(exit_code))
-                utils.log("SCRIPTS_CALLER", "Error executing script: " .. script_name)
-                utils.log("SCRIPTS_CALLER", "Exit code: " .. tostring(exit_code))
-                utils.log("SCRIPTS_CALLER", "Stderr: " .. tostring(stderr))
-            end
+            utils.show_error_notification("脚本执行失败", stderr or "未知错误: " .. exit_code)
+            utils.log("SCRIPTS_CALLER",
+                "Error: " .. script_name .. " Exit: " .. exit_code .. " Stderr: " .. (stderr or ""))
         end
-    end, arguments)
-
-    task:setWorkingDirectory(config.scripts_dir)
-    return task:start()
+    end, arguments):setWorkingDirectory(config.scripts_dir):start()
 end
 
--- 文件转换功能
-scripts_caller.convert = {
-    csv_to_txt = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.convert_csv_to_txt, { file }, callback)
-        end
-    end,
+-- 通用文件处理函数
+local function process_files(script_name, files, callback)
+    files = files or utils.get_selected_files_newline()
+    for _, file in ipairs(files) do execute_script(script_name, { file }, callback) end
+end
 
-    csv_to_xlsx = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.convert_csv_to_xlsx, { file }, callback)
-        end
-    end,
-
-    txt_to_csv = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.convert_txt_to_csv, { file }, callback)
-        end
-    end,
-
-    xlsx_to_csv = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.convert_xlsx_to_csv, { file }, callback)
-        end
-    end,
-
-    docx_to_md = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.convert_docx_to_md, { file }, callback)
-        end
-    end,
-
-    pptx_to_md = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.convert_pptx_to_md, { file }, callback)
-        end
-    end,
-
-    office_batch = function(options, callback)
-        local args = {}
-        if options and options.all then table.insert(args, "-a") end
-        if options and options.recursive then table.insert(args, "-r") end
-        if options and options.doc then table.insert(args, "-d") end
-        if options and options.excel then table.insert(args, "-x") end
-        if options and options.ppt then table.insert(args, "-p") end
-
-        execute_script(config.scripts.convert_office_batch, args, callback)
+-- 批量提取函数（支持无文件参数）
+local function extract_batch(script_name, files, callback)
+    files = files or utils.get_selected_files_newline()
+    if #files == 0 then
+        execute_script(script_name, {}, callback)
+    else
+        for _, file in ipairs(files) do execute_script(script_name, { file }, callback) end
     end
-}
+end
 
--- 内容提取功能
-scripts_caller.extract = {
-    images = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        if #files == 0 then
-            execute_script(config.scripts.extract_images_office, {}, callback)
-        else
-            for _, file in ipairs(files) do
-                execute_script(config.scripts.extract_images_office, { file }, callback)
+-- 导出模块
+return {
+    convert = {
+        csv_to_txt = function(files, cb) process_files("convert_csv_to_txt", files, cb) end,
+        csv_to_xlsx = function(files, cb) process_files("convert_csv_to_xlsx", files, cb) end,
+        txt_to_csv = function(files, cb) process_files("convert_txt_to_csv", files, cb) end,
+        txt_to_xlsx = function(files, cb) process_files("convert_txt_to_xlsx", files, cb) end,
+        xlsx_to_csv = function(files, cb) process_files("convert_xlsx_to_csv", files, cb) end,
+        xlsx_to_txt = function(files, cb) process_files("convert_xlsx_to_txt", files, cb) end,
+        docx_to_md = function(files, cb) process_files("convert_docx_to_md", files, cb) end,
+        pptx_to_md = function(files, cb) process_files("convert_pptx_to_md", files, cb) end,
+        office_batch = function(options, callback)
+            local args = {}
+            if options then
+                for flag, opt in pairs({ all = "-a", recursive = "-r", doc = "-d", excel = "-x", ppt = "-p" }) do
+                    if options[flag] then table.insert(args, opt) end
+                end
             end
+            execute_script("convert_office_batch", args, callback)
         end
-    end,
+    },
 
-    tables = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        if #files == 0 then
-            execute_script(config.scripts.extract_tables_office, {}, callback)
-        else
-            for _, file in ipairs(files) do
-                execute_script(config.scripts.extract_tables_office, { file }, callback)
-            end
-        end
-    end,
+    extract = {
+        images = function(files, cb) extract_batch("extract_images_office", files, cb) end,
+        tables = function(files, cb) extract_batch("extract_tables_office", files, cb) end,
+        text_tokens = function(files, cb) process_files("extract_text_tokens", files, cb) end,
+    },
 
-    text_tokens = function(files, callback)
-        files = files or utils.get_selected_files_newline()
-        for _, file in ipairs(files) do
-            execute_script(config.scripts.extract_text_tokens, { file }, callback)
-        end
-    end
+    file = {
+        move_up_level = function(cb) execute_script("file_move_up_level", {}, cb) end
+    },
+
+    merge = {
+        csv_files = function(cb) execute_script("merge_csv_files", {}, cb) end,
+        markdown_files = function(cb) execute_script("merge_markdown_files", {}, cb) end,
+    },
+
+    manage = {
+        launch_apps = function(cb) execute_script("manage_app_launcher", {}, cb) end,
+        pip_packages = function(cb) execute_script("manage_pip_packages", {}, cb) end,
+    },
+
+    utils = {
+        get_selected_files = utils.get_selected_files_newline,
+        execute_script = execute_script
+    }
 }
-
--- 文件管理功能
-scripts_caller.file = {
-    move_up_level = function(callback)
-        execute_script(config.scripts.file_move_up_level, {}, callback)
-    end
-}
-
--- 合并功能
-scripts_caller.merge = {
-    csv_files = function(callback)
-        execute_script(config.scripts.merge_csv_files, {}, callback)
-    end,
-
-    markdown_files = function(callback)
-        execute_script(config.scripts.merge_markdown_files, {}, callback)
-    end
-}
-
--- 管理功能
-scripts_caller.manage = {
-    launch_apps = function(callback)
-        execute_script(config.scripts.manage_app_launcher, {}, callback)
-    end,
-
-    pip_packages = function(callback)
-        execute_script(config.scripts.manage_pip_packages, {}, callback)
-    end
-}
-
--- 工具函数
-scripts_caller.utils = {
-    get_selected_files = utils.get_selected_files_newline,
-    execute_script = execute_script
-}
-
-return scripts_caller

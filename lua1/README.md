@@ -6,36 +6,197 @@
 
 ## 🏗️ 系统架构
 
+### 核心模块调用关系图
+
 ```mermaid
 graph TB
-    A[scripts_hotkeys.lua] --> B[app_controls.lua]
-    A --> C[script_runner.lua]
-    A --> D[scripts_caller.lua]
-    E[clipboard_hotkeys.lua] --> F[clipboard_utils.lua]
+    A[scripts_hotkeys.lua<br/>主热键配置中心] --> B[app_controls.lua<br/>应用控制模块]
+    A --> C[script_runner.lua<br/>脚本运行器]
+    A --> D[scripts_caller.lua<br/>脚本调用模块]
+    A --> G[common_utils.lua<br/>公共工具库]
     
-    B --> G[common_utils.lua]
+    E[clipboard_hotkeys.lua<br/>剪贴板热键] --> F[clipboard_utils.lua<br/>剪贴板工具]
+    
+    B --> G
     C --> G
     D --> G
     F --> G
     
-    G --> H[Hammerspoon APIs]
+    D --> H[scripts_ray/*.py<br/>Python转换脚本]
+    D --> I[scripts_ray/*.sh<br/>Shell脚本工具]
     
-    subgraph "主配置层"
+    G --> J[Hammerspoon APIs<br/>系统API层]
+    
+    subgraph "🎛️ 主配置层"
         A
         E
     end
     
-    subgraph "功能模块层"
+    subgraph "⚙️ 功能模块层"
         B
         C
         D
         F
     end
     
-    subgraph "工具层"
+    subgraph "🔧 工具层"
         G
     end
+    
+    subgraph "📦 外部脚本层"
+        H
+        I
+    end
+    
+    subgraph "🖥️ 系统API层"
+        J
+    end
 ```
+
+### 详细调用关系分析
+
+#### 🎯 **核心调用链路**
+
+**主热键系统** (`scripts_hotkeys.lua`)：
+- **直接调用**：`app_controls.lua`, `script_runner.lua`, `scripts_caller.lua`, `common_utils.lua`
+- **功能**：作为系统总控制中心，响应10个核心热键
+- **智能菜单**：根据文件类型动态调用`scripts_caller.lua`中的转换功能
+
+**剪贴板系统** (`clipboard_hotkeys.lua`)：
+- **直接调用**：`clipboard_utils.lua`
+- **功能**：独立的剪贴板操作热键系统
+- **设计理念**：与主热键系统分离，避免快捷键冲突
+
+#### 📊 **模块依赖层次**
+
+```
+Level 1 (API层)    : Hammerspoon APIs
+Level 2 (工具层)   : common_utils.lua
+Level 3 (功能层)   : app_controls.lua, script_runner.lua, scripts_caller.lua, clipboard_utils.lua
+Level 4 (配置层)   : scripts_hotkeys.lua, clipboard_hotkeys.lua
+Level 5 (外部层)   : scripts_ray/*.py, scripts_ray/*.sh
+```
+
+#### 🔄 **scripts_caller.lua 外部脚本调用映射**
+
+**文件转换类脚本调用**：
+```lua
+scripts_caller.convert = {
+    csv_to_txt()     → scripts_ray/convert_csv_to_txt.py
+    csv_to_xlsx()    → scripts_ray/convert_csv_to_xlsx.py
+    txt_to_csv()     → scripts_ray/convert_txt_to_csv.py
+    txt_to_xlsx()    → scripts_ray/convert_txt_to_xlsx.py
+    xlsx_to_csv()    → scripts_ray/convert_xlsx_to_csv.py
+    xlsx_to_txt()    → scripts_ray/convert_xlsx_to_txt.py
+    docx_to_md()     → scripts_ray/convert_docx_to_md.sh
+    pptx_to_md()     → scripts_ray/convert_pptx_to_md.py
+    office_batch()   → scripts_ray/convert_office_batch.sh
+}
+```
+
+**内容提取类脚本调用**：
+```lua
+scripts_caller.extract = {
+    images()         → scripts_ray/extract_images_office.py
+    tables()         → scripts_ray/extract_tables_office.py
+    text_tokens()    → scripts_ray/extract_text_tokens.py
+}
+```
+
+**文件管理类脚本调用**：
+```lua
+scripts_caller.file = {
+    move_up_level()  → scripts_ray/file_move_up_level.sh
+}
+
+scripts_caller.merge = {
+    csv_files()      → scripts_ray/merge_csv_files.sh
+    markdown_files() → scripts_ray/merge_markdown_files.sh
+}
+
+scripts_caller.manage = {
+    launch_apps()    → scripts_ray/manage_app_launcher.sh
+    pip_packages()   → scripts_ray/manage_pip_packages.sh
+}
+```
+
+#### 🔗 **scripts_ray 内部依赖关系**
+
+**通用函数库依赖**：
+```bash
+# Shell脚本统一引入
+source "$(dirname "${BASH_SOURCE[0]}")/common_functions.sh"
+
+# Python脚本统一引入
+from common_utils import (show_success, show_error, validate_input_file, ...)
+```
+
+**脚本分类与功能矩阵**：
+
+| 功能分类 | Shell脚本 | Python脚本 | 主要用途 |
+|---------|-----------|------------|----------|
+| **文档转换** | `convert_docx_to_md.sh`<br/>`convert_office_batch.sh` | `convert_pptx_to_md.py`<br/>`convert_wmf_to_png.py` | Word/PPT转Markdown<br/>批量Office转换 |
+| **表格转换** | - | `convert_csv_to_*.py`<br/>`convert_txt_to_*.py`<br/>`convert_xlsx_to_*.py` | CSV/Excel/TXT互转 |
+| **内容提取** | - | `extract_images_office.py`<br/>`extract_tables_office.py`<br/>`extract_text_tokens.py` | 图片/表格/文本提取 |
+| **文件操作** | `file_move_up_level.sh`<br/>`merge_*.sh` | `link_bind_files.py`<br/>`splitsheets.py` | 文件移动/合并/分离 |
+| **系统管理** | `manage_*.sh`<br/>`list_applications.sh` | - | 应用管理/包管理 |
+
+#### ⚡ **执行流程示例**
+
+**智能转换菜单执行流程**：
+```
+1. 用户按下 ⌘⌃⌥ + Space
+2. scripts_hotkeys.lua → show_context_menu()
+3. 分析选中文件类型 → utils.get_selected_files_newline()
+4. 构建动态菜单 → 根据文件扩展名
+5. 用户选择转换选项
+6. scripts_caller.lua → convert.pptx_to_md()
+7. 异步执行 → scripts_ray/convert_pptx_to_md.py
+8. 显示执行结果 → utils.show_success_notification()
+```
+
+**应用控制执行流程**：
+```
+1. 用户按下 ⌘⌃⇧ + T
+2. scripts_hotkeys.lua → apps.open_ghostty_here()
+3. app_controls.lua → utils.get_finder_current_dir()
+4. 构建命令 → cd "当前目录"
+5. 剪贴板操作 → utils.safe_clipboard_operation()
+6. 发送到Ghostty → AppleScript自动化
+7. 显示反馈 → utils.show_success_notification()
+```
+
+#### 📊 **调用关系总览表**
+
+| 调用者模块 | 被调用模块 | 调用方式 | 主要功能 |
+|-----------|-----------|----------|----------|
+| `scripts_hotkeys.lua` | `app_controls.lua` | `require + 函数调用` | 应用启动控制 |
+| `scripts_hotkeys.lua` | `script_runner.lua` | `require + 函数调用` | 脚本执行管理 |
+| `scripts_hotkeys.lua` | `scripts_caller.lua` | `require + 函数调用` | 文件转换操作 |
+| `clipboard_hotkeys.lua` | `clipboard_utils.lua` | `require + 函数调用` | 剪贴板操作 |
+| 所有功能模块 | `common_utils.lua` | `require + 工具函数` | 公共工具服务 |
+| `scripts_caller.lua` | `scripts_ray/*.py` | `hs.task异步执行` | Python转换脚本 |
+| `scripts_caller.lua` | `scripts_ray/*.sh` | `hs.task异步执行` | Shell工具脚本 |
+
+#### 🔧 **技术架构特点**
+
+**模块化设计原则**：
+- ✅ **单一职责**：每个模块负责特定功能领域
+- ✅ **松耦合**：模块间通过标准接口通信
+- ✅ **高内聚**：相关功能集中在同一模块
+- ✅ **依赖注入**：通过`require()`实现模块依赖
+
+**错误处理机制**：
+- 🛡️ **统一通知系统**：所有模块使用相同的成功/错误提示
+- 🛡️ **异步执行保护**：外部脚本执行不阻塞主界面
+- 🛡️ **文件验证机制**：所有文件操作前进行安全检查
+- 🛡️ **优雅降级**：模块加载失败时不影响其他功能
+
+**性能优化策略**：
+- ⚡ **懒加载**：模块仅在需要时加载
+- ⚡ **并行执行**：`script_runner.lua`支持多脚本并行运行
+- ⚡ **缓存机制**：Finder目录信息缓存避免重复查询
+- ⚡ **资源管理**：临时文件和剪贴板内容自动清理
 
 ## 📦 模块详细说明
 
@@ -289,3 +450,5 @@ graph TB
 ---
 
 *📅 最后更新：2024年 | 🏗️ 架构版本：v2.0* 
+
+
