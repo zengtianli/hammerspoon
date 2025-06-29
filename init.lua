@@ -17,9 +17,6 @@ function requireAllFromDirectory(directory)
     end
 end
 
--- requireAllFromDirectory("03_launcher")
--- requireAllFromDirectory("10_yabai")
--- requireAllFromDirectory("08_utils")
 requireAllFromDirectory("lua")
 requireAllFromDirectory("lua1")
 -- requireAllFromDirectory("temp")
@@ -38,4 +35,8 @@ function reloadConfig(files)
 end
 
 myWatcher = hs.pathwatcher.new(hs.configdir .. "/", reloadConfig):start()
+
+-- Enable IPC for command line access
+hs.ipc.cliInstall()
+
 hs.alert.show("Config Loaded")

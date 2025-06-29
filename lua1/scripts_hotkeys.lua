@@ -8,6 +8,8 @@ local hotkeys = {
     { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", apps.open_cursor_here },
     { { "cmd", "ctrl", "shift" }, "v", "Nvim在Ghostty中打开文件", apps.open_file_in_nvim_ghostty },
     { { "cmd", "shift" }, "n", "创建新文件夹", apps.create_folder },
+    -- 宏控制
+    { { "cmd", "ctrl", "shift" }, "m", "宏录制/记录位置", apps.macro_record },
     -- 鼠标控制
     { { "cmd", "ctrl", "shift", "alt" }, "f", "切换鼠标跟随", mouse_follow.toggle_mouse_follow },
     -- 脚本运行
@@ -74,6 +76,8 @@ local function show_help()
 📱 应用控制:
   ⌘⌃⇧+T: Ghostty在此处打开  ⌘⌃⇧+W: Cursor在此处打开
   ⌘⌃⇧+V: Nvim在Ghostty中打开文件  ⌘⇧+N: 创建新文件夹
+🎬 宏控制:
+  ⌘⌃⇧+M: 宏录制/记录位置
 🖱️ 鼠标控制:
   ⌘⌃⇧⌥+F: 切换鼠标跟随
 🏃 脚本运行:

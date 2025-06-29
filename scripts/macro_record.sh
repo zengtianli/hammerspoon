@@ -22,5 +22,5 @@ else
     echo "" > "$RECORD_FILE"  # 清空之前的录制
     
     echo "宏录制已开始"
-    osascript -e 'display notification "宏录制已开始，按 Cmd+Shift+R 记录位置，按 Cmd+Shift+T 停止" with title "宏录制"'
+    osascript -e 'display notification "宏录制已开始" with title "宏录制"'
 fi 
