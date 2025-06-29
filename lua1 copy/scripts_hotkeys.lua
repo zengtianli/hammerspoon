@@ -1,8 +1,13 @@
 local scripts = require("lua1.scripts_caller")
 local apps = require("lua1.app_controls")
 local runner = require("lua1.script_runner")
-local utils = require("lua1.common_utils")
 -- ===== 文件转换热键 =====
+-- CSV/Excel转换热键组合 (⌘⌥⇧ + 字母)
+-- ===== 内容提取热键 =====
+-- ===== 文件管理热键 =====
+-- ===== 应用管理热键 =====
+
+-- ===== 应用控制热键 =====
 local app_hotkeys = {
     { { "cmd", "ctrl", "shift" }, "t", "Ghostty在此处打开", function() apps.open_ghostty_here() end },
     { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", function() apps.open_cursor_here() end },
@@ -19,7 +24,7 @@ local script_hotkeys = {
 -- ===== 智能上下文菜单 =====
 -- 根据选中文件类型显示不同的转换选项
 local function show_context_menu()
-    local files = utils.get_selected_files_newline()
+    local files = scripts.utils.get_selected_files()
     if #files == 0 then
         hs.alert.show("请先在Finder中选择文件")
         return
@@ -97,11 +102,35 @@ local function show_context_menu()
         hs.alert.show("选中的文件类型暂不支持转换")
     end
 end
+-- ===== 智能文件监控 =====
+-- 监控下载文件夹，自动处理特定类型文件
+local function setup_file_watcher()
+    local downloads_path = os.getenv("HOME") .. "/Downloads"
+    local watcher = hs.pathwatcher.new(downloads_path, function(files)
+        for _, file in ipairs(files) do
+            if file:match("%.csv$") then
+                hs.notify.new({
+                    title = "发现CSV文件",
+                    informativeText = "是否转换为Excel？",
+                    actionButtonTitle = "转换",
+                    otherButtonTitle = "忽略",
+                    hasActionButton = true
+                }, function(notification)
+                    if notification:activationType() == hs.notify.activationTypes.actionButtonClicked then
+                        scripts.convert.csv_to_xlsx({ file })
+                    end
+                end):send()
+            end
+        end
+    end)
+    watcher:start()
+    return watcher
+end
 -- ===== 注册所有热键 =====
 local function register_hotkeys()
     local all_hotkeys = {}
-    -- 合并保留的热键组
-    for _, hotkey_group in ipairs({ app_hotkeys, script_hotkeys }) do
+    -- 合并所有热键
+    for _, hotkey_group in ipairs({ convert_hotkeys, extract_hotkeys, file_hotkeys, manage_hotkeys, app_hotkeys, script_hotkeys, test_hotkeys }) do
         for _, hotkey in ipairs(hotkey_group) do
             table.insert(all_hotkeys, hotkey)
         end
@@ -121,9 +150,10 @@ local function setup_app_automation()
     -- 当切换到Finder时，预加载文件信息
     hs.application.watcher.new(function(appName, eventType, appObject)
         if appName == "Finder" and eventType == hs.application.watcher.activated then
-            local files = utils.get_selected_files_newline()
+            -- 可以在这里预处理一些信息
+            local files = scripts.utils.get_selected_files()
             if #files > 0 then
-                utils.log("SCRIPTS_HOTKEYS", "Finder激活，选中了 " .. #files .. " 个文件")
+                print("Finder激活，选中了 " .. #files .. " 个文件")
             end
         end
     end):start()
@@ -133,22 +163,33 @@ local scripts_hotkeys = {}
 function scripts_hotkeys.init()
     register_hotkeys()
     setup_app_automation()
+    -- setup_file_watcher() -- 可选：自动文件监控
     hs.alert.show("📁 Scripts Hotkeys 已启动")
 end
 
 function scripts_hotkeys.show_help()
     local help_text = [[
 🔥 Scripts Hotkeys 快捷键说明
-📱 应用控制:
-  ⌘⌃⇧+T: Ghostty在此处打开
-  ⌘⌃⇧+W: Cursor在此处打开
-  ⌘⌃⇧+V: Nvim在Ghostty中打开文件
-  ⌘⇧+N: 创建新文件夹
-🏃 脚本运行:
-  ⌘⌃⇧+S: 运行选中脚本
-  ⌘⌃⇧+R: 并行运行脚本
+📄 文件转换 (⌘⌥⇧ + 数字/字母):
+  1: CSV→TXT    2: CSV→XLSX
+  3: TXT→CSV    4: XLSX→CSV
+  D: DOCX→MD    P: PPTX→MD
+  A: 批量转换所有
+🎯 内容提取 (⌘⌃⇧ + 字母):
+  I: 提取图片    T: 提取表格
+  K: 计算Tokens
+📁 文件管理 (⌘⌃⌥ + 字母):
+  U: 文件上移    C: 合并CSV
+  M: 合并Markdown
+⚙️ 系统管理:
+  ⌘⌃⌥⇧+L: 启动应用  ⌘⌃⇧+P: Python包管理
+📱 应用控制 (⌘⌃⇧ + 字母):
+  T: Ghostty在此处打开  W: Cursor在此处打开
+  V: Nvim在Ghostty中打开文件  N: 创建新文件夹
+🏃 脚本运行 (⌘⌃⇧ + 字母):
+  S: 运行选中脚本  R: 并行运行脚本
 🎛️ 智能菜单:
-  ⌘⌃⌥+Space: 智能转换菜单
+  ⌘⌃⌥ + Space: 智能转换菜单
 ]]
     hs.alert.show(help_text, 10)
 end
