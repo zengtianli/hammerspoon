@@ -1,7 +1,7 @@
-local scripts, apps, runner, utils = require("lua1.scripts_caller"), require("lua1.app_controls"),
-    require("lua1.script_runner"), require("lua1.common_utils")
+local scripts, apps, runner, utils, mouse_follow = require("lua1.scripts_caller"), require("lua1.app_controls"),
+    require("lua1.script_runner"), require("lua1.common_utils"), require("lua1.mouse_follow_control")
 
--- 热键配置表
+-- 热键和转换配置
 local hotkeys = {
     -- 应用控制
     { { "cmd", "ctrl", "shift" }, "t", "Ghostty在此处打开", apps.open_ghostty_here },
@@ -11,6 +11,8 @@ local hotkeys = {
     -- 脚本运行
     { { "cmd", "ctrl", "shift" }, "s", "运行选中脚本", runner.run_single },
     { { "cmd", "ctrl", "shift" }, "r", "并行运行脚本", runner.run_parallel },
+    -- 鼠标跟随控制
+    { { "cmd", "ctrl", "shift", "alt" }, "f", "切换鼠标跟随", mouse_follow.toggle },
 }
 
 -- 文件类型转换映射
@@ -28,28 +30,12 @@ local function show_context_menu()
     local files = utils.get_selected_files_newline()
     if #files == 0 then return hs.alert.show("请先在Finder中选择文件") end
 
-    local file_types, menu_items = {}, {}
-
-    -- 分析文件类型
-    for _, file in ipairs(files) do
-        local ext = file:match("%.([^%.]+)$")
-        if ext then file_types[ext:lower()] = true end
-    end
+    local file_types = utils.analyze_file_types(files)
+    local menu_items = {}
 
     -- 构建转换菜单
     for ext, config in pairs(conversions) do
-        if file_types[ext] then
-            local item = { title = config.title }
-            if config.menu then
-                item.menu = {}
-                for _, conv in ipairs(config.menu) do
-                    table.insert(item.menu, { title = conv.title, fn = function() conv.fn(files) end })
-                end
-            else
-                item.fn = function() config.fn(files) end
-            end
-            table.insert(menu_items, item)
-        end
+        if file_types[ext] then table.insert(menu_items, utils.build_menu_item(config, files)) end
     end
 
     -- Office文档提取选项
@@ -63,25 +49,12 @@ local function show_context_menu()
         })
     end
 
-    if #menu_items > 0 then
-        local menu = hs.menubar.new():setTitle("📁"):setMenu(menu_items)
-        menu:removeFromMenuBar()
-        hs.alert.show("右键点击菜单栏图标选择操作")
-        hs.timer.doAfter(0.1, function() menu:popupMenu(hs.mouse.getAbsolutePosition()) end)
-    else
-        hs.alert.show("选中的文件类型暂不支持转换")
-    end
+    utils.show_popup_menu(menu_items)
 end
 
--- 注册热键和自动化
+-- 初始化
 local function init()
-    -- 注册所有热键
-    for _, hk in ipairs(hotkeys) do
-        hs.hotkey.bind(hk[1], hk[2], hk[3], hk[4])
-    end
-
-    -- 注册智能菜单热键
-    hs.hotkey.bind({ "cmd", "ctrl", "alt" }, "space", "智能转换菜单", show_context_menu)
+    local count = utils.register_hotkeys(hotkeys, { { { "cmd", "ctrl", "alt" }, "space", "智能转换菜单", show_context_menu } })
 
     -- 应用切换监控
     hs.application.watcher.new(function(appName, eventType)
@@ -91,7 +64,7 @@ local function init()
         end
     end):start()
 
-    print("✅ Scripts Hotkeys 已加载，共注册 " .. (#hotkeys + 1) .. " 个热键")
+    print("✅ Scripts Hotkeys 已加载，共注册 " .. count .. " 个热键")
     hs.alert.show("📁 Scripts Hotkeys 已启动")
 end
 
@@ -103,6 +76,8 @@ local function show_help()
   ⌘⌃⇧+V: Nvim在Ghostty中打开文件  ⌘⇧+N: 创建新文件夹
 🏃 脚本运行:
   ⌘⌃⇧+S: 运行选中脚本  ⌘⌃⇧+R: 并行运行脚本
+🖱️ 鼠标跟随:
+  ⌘⌃⇧+M: 切换鼠标跟随  ⌘⌃⇧⌥+M: 显示跟随状态
 🎛️ 智能菜单:
   ⌘⌃⌥+Space: 智能转换菜单]], 10)
 end

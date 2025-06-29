@@ -283,6 +283,124 @@ function common_utils.debug_print(title, data)
     print("=== " .. title .. " 结束 ===")
 end
 
+-- ===== 抽象的高级函数 =====
+
+-- 批量注册热键
+function common_utils.register_hotkeys(hotkeys_table, extra_hotkeys)
+    for _, hk in ipairs(hotkeys_table) do
+        hs.hotkey.bind(hk[1], hk[2], hk[3], hk[4])
+    end
+    if extra_hotkeys then
+        for _, hk in ipairs(extra_hotkeys) do
+            hs.hotkey.bind(hk[1], hk[2], hk[3], hk[4])
+        end
+    end
+    return #hotkeys_table + (extra_hotkeys and #extra_hotkeys or 0)
+end
+
+-- 分析文件类型
+function common_utils.analyze_file_types(files)
+    local file_types = {}
+    for _, file in ipairs(files) do
+        local ext = file:match("%.([^%.]+)$")
+        if ext then file_types[ext:lower()] = true end
+    end
+    return file_types
+end
+
+-- 构建转换菜单项
+function common_utils.build_menu_item(config, files)
+    local item = { title = config.title }
+    if config.menu then
+        item.menu = {}
+        for _, conv in ipairs(config.menu) do
+            table.insert(item.menu, { title = conv.title, fn = function() conv.fn(files) end })
+        end
+    else
+        item.fn = function() config.fn(files) end
+    end
+    return item
+end
+
+-- 显示弹出菜单
+function common_utils.show_popup_menu(menu_items, title)
+    if #menu_items > 0 then
+        local menu = hs.menubar.new():setTitle(title or "📁"):setMenu(menu_items)
+        menu:removeFromMenuBar()
+        hs.alert.show("右键点击菜单栏图标选择操作")
+        hs.timer.doAfter(0.1, function() menu:popupMenu(hs.mouse.getAbsolutePosition()) end)
+        return true
+    else
+        hs.alert.show("选中的文件类型暂不支持转换")
+        return false
+    end
+end
+
+-- 执行任务并统计
+function common_utils.execute_task_with_stats(tasks, operation_name)
+    local success_count, failed_count, total_count = 0, 0, #tasks
+
+    for i, task_func in ipairs(tasks) do
+        common_utils.show_progress(i, total_count, operation_name)
+        if task_func() then
+            success_count = success_count + 1
+        else
+            failed_count = failed_count + 1
+        end
+    end
+
+    print("")
+    common_utils.show_info(operation_name .. "完成")
+    print("✅ 成功: " .. success_count .. " 个")
+    if failed_count > 0 then print("❌ 失败: " .. failed_count .. " 个") end
+    print("📊 总计: " .. total_count .. " 个")
+
+    return { success = success_count, failed = failed_count, total = total_count }
+end
+
+-- 创建任务执行器
+function common_utils.create_task_executor(cmd, callback)
+    return function(args, working_dir)
+        return hs.task.new(cmd, callback or function() end, args):setWorkingDirectory(working_dir or "."):start()
+    end
+end
+
+-- 在应用中运行命令
+function common_utils.run_command_in_app(app_name, command, keystroke_sequence)
+    local app = common_utils.ensure_app_running(app_name, 1)
+    if not app then
+        hs.timer.doAfter(1, function() common_utils.run_command_in_app(app_name, command, keystroke_sequence) end)
+        return
+    end
+
+    app:activate()
+    hs.timer.doAfter(0.2, function()
+        if keystroke_sequence then
+            hs.eventtap.keyStroke(keystroke_sequence[1], keystroke_sequence[2])
+        end
+        hs.timer.doAfter(0.3, function()
+            common_utils.safe_clipboard_operation(command, function()
+                hs.eventtap.keyStroke({ "cmd" }, "v")
+                hs.timer.doAfter(0.1, function()
+                    hs.eventtap.keyStroke({}, "return")
+                end)
+            end)
+        end)
+    end)
+end
+
+-- 执行AppleScript并处理结果
+function common_utils.execute_applescript(script, success_msg, error_msg)
+    local ok, result = hs.osascript.applescript(script)
+    if ok then
+        if success_msg then common_utils.show_success_notification("操作成功", success_msg) end
+        return result
+    else
+        if error_msg then hs.alert.show("❌ " .. error_msg) end
+        return nil
+    end
+end
+
 print("🔧 Common Utils 模块已加载")
 
 return common_utils

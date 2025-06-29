@@ -1,30 +1,16 @@
--- 加载剪贴板工具模块
-local clipboard_utils = require("lua1.clipboard_utils")
+local clipboard_utils, utils = require("lua1.clipboard_utils"), require("lua1.common_utils")
 
--- 热键配置
-local clipboard_hotkeys = {}
+-- 剪贴板热键配置
+local hotkeys = {
+    { { "cmd", "ctrl", "shift" }, "n", "复制文件名", clipboard_utils.copy_filenames },
+    { { "cmd", "ctrl", "shift" }, "c", "复制文件名和内容", clipboard_utils.copy_names_and_content },
+    { { "ctrl", "alt" }, "v", "粘贴到Finder", clipboard_utils.paste_to_finder },
+}
 
--- 复制选中文件的文件名到剪贴板
--- 热键：⌘⌃⇧ + C
-clipboard_hotkeys.copy_filenames = hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "n", function()
-    clipboard_utils.copy_filenames()
-end)
-
--- 复制选中文件的文件名和内容到剪贴板
--- 热键：⌘⌃⇧ + c
-clipboard_hotkeys.copy_names_and_content = hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "c", function()
-    clipboard_utils.copy_names_and_content()
-end)
-
--- 粘贴到Finder当前目录
--- 热键：⌘⌃⇧ + v
-clipboard_hotkeys.paste_to_finder = hs.hotkey.bind({ "ctrl", "alt" }, "v", function()
-    clipboard_utils.paste_to_finder()
-end)
+-- 注册热键
+utils.register_hotkeys(hotkeys)
 
 print("📋 剪贴板热键已配置:")
-print("   ⌘⌃⇧ + n: 复制文件名")
-print("   ⌘⌃⇧ + c: 复制文件名和内容")
-print("   ⌘⌃⇧ + v: 粘贴到Finder")
+print("   ⌘⌃⇧ + n: 复制文件名   ⌘⌃⇧ + c: 复制文件名和内容   ⌘⌃⇧ + v: 粘贴到Finder")
 
-return clipboard_hotkeys
+return { hotkeys = hotkeys }

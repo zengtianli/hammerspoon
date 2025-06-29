@@ -32,7 +32,7 @@ function M.checkDeps()
 end
 
 function M.setupHotkeys()
-    M:addHotkey({ "cmd", "ctrl" }, "f", M.toggleMouseFollow, "切换鼠标跟随")
+    M:addHotkey({ "cmd", "ctrl", "alt", "shift" }, "f", M.toggleMouseFollow, "切换鼠标跟随")
 end
 
 if M.config.enabled then
