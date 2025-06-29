@@ -8,11 +8,11 @@ local hotkeys = {
     { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", apps.open_cursor_here },
     { { "cmd", "ctrl", "shift" }, "v", "Nvim在Ghostty中打开文件", apps.open_file_in_nvim_ghostty },
     { { "cmd", "shift" }, "n", "创建新文件夹", apps.create_folder },
+    -- 鼠标控制
+    { { "cmd", "ctrl", "shift", "alt" }, "f", "切换鼠标跟随", mouse_follow.toggle_mouse_follow },
     -- 脚本运行
     { { "cmd", "ctrl", "shift" }, "s", "运行选中脚本", runner.run_single },
     { { "cmd", "ctrl", "shift" }, "r", "并行运行脚本", runner.run_parallel },
-    -- 鼠标跟随控制
-    { { "cmd", "ctrl", "shift", "alt" }, "f", "切换鼠标跟随", mouse_follow.toggle },
 }
 
 -- 文件类型转换映射
@@ -74,10 +74,10 @@ local function show_help()
 📱 应用控制:
   ⌘⌃⇧+T: Ghostty在此处打开  ⌘⌃⇧+W: Cursor在此处打开
   ⌘⌃⇧+V: Nvim在Ghostty中打开文件  ⌘⇧+N: 创建新文件夹
+🖱️ 鼠标控制:
+  ⌘⌃⇧⌥+F: 切换鼠标跟随
 🏃 脚本运行:
   ⌘⌃⇧+S: 运行选中脚本  ⌘⌃⇧+R: 并行运行脚本
-🖱️ 鼠标跟随:
-  ⌘⌃⇧+M: 切换鼠标跟随  ⌘⌃⇧⌥+M: 显示跟随状态
 🎛️ 智能菜单:
   ⌘⌃⌥+Space: 智能转换菜单]], 10)
 end

@@ -26,8 +26,8 @@ while [ -f "$STATUS_FILE" ]; do
         last_app="$current_app"
     fi
     
-    # 等待0.1秒再检查
-    sleep 0.1
+    # 等待0.01秒再检查（提高响应性）
+    sleep 0.01
 done
 
 echo "鼠标跟随守护进程已停止" 
