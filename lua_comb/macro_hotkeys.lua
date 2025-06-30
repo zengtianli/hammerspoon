@@ -1,7 +1,6 @@
-local utils = require("lua1.common_utils")
-local macro = require("lua1.macro_controls")
-
 -- 宏快捷键模块
+local utils = require("lua_comb.common_utils")
+
 local macro_hotkeys = {}
 
 -- 宏快捷键配置表 (延迟绑定函数)
@@ -15,9 +14,15 @@ local macro_hotkey_configs = {
 
 -- 存储已绑定的快捷键对象
 local bound_hotkeys = {}
+local macro_controls = nil -- 延迟加载
 
 -- 绑定宏快捷键
 macro_hotkeys.bind_macro_hotkeys = function()
+    -- 延迟加载 macro_controls 避免循环依赖
+    if not macro_controls then
+        macro_controls = require("lua_comb.macro_controls")
+    end
+
     utils.debug_print("宏快捷键", "开始绑定宏快捷键...")
 
     for i, config in ipairs(macro_hotkey_configs) do
@@ -27,14 +32,14 @@ macro_hotkeys.bind_macro_hotkeys = function()
             utils.debug_print("宏快捷键", "触发: " .. description)
 
             -- 动态获取函数
-            local callback = macro[func_name]
+            local callback = macro_controls[func_name]
             if callback and type(callback) == "function" then
                 callback()
             else
                 utils.show_error_notification("宏快捷键", "函数未找到: " .. func_name)
                 -- 列出可用函数
                 local available_funcs = {}
-                for k, v in pairs(macro or {}) do
+                for k, v in pairs(macro_controls or {}) do
                     if type(v) == "function" then
                         table.insert(available_funcs, k)
                     end
@@ -44,7 +49,7 @@ macro_hotkeys.bind_macro_hotkeys = function()
         end)
 
         table.insert(bound_hotkeys, hotkey)
-        utils.debug_print("宏快捷键", "已绑定: " .. description .. " (⌘⌃⇧⌥+" .. key .. ") -> " .. func_name)
+        utils.debug_print("宏快捷键", "已绑定: " .. description .. " (⌘⌃⇧+" .. key .. ") -> " .. func_name)
     end
 
     utils.show_success_notification("宏快捷键", "已绑定 " .. #macro_hotkey_configs .. " 个宏快捷键")
@@ -76,7 +81,7 @@ macro_hotkeys.get_hotkey_info = function()
     for i, config in ipairs(macro_hotkey_configs) do
         local modifiers, key, description = config[1], config[2], config[3]
         table.insert(info, {
-            key = "⌘⌃⇧⌥+" .. key,
+            key = "⌘⌃⇧+" .. key,
             description = description,
             modifiers = modifiers,
             keycode = key
@@ -97,7 +102,7 @@ macro_hotkeys.show_help = function()
     local help_text = "🎬 宏快捷键帮助:\n"
     for i, config in ipairs(macro_hotkey_configs) do
         local modifiers, key, description = config[1], config[2], config[3]
-        help_text = help_text .. "  ⌘⌃⇧⌥+" .. key .. ": " .. description .. "\n"
+        help_text = help_text .. "  ⌘⌃⇧+" .. key .. ": " .. description .. "\n"
     end
     hs.alert.show(help_text, 5)
 end

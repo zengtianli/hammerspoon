@@ -3,44 +3,30 @@ local scripts = require("lua.scripts_caller")
 -- ===== 文件转换热键 =====
 
 -- CSV/Excel转换热键组合 (⌘⌥⇧ + 字母)
-local convert_hotkeys = {
-    -- CSV转换
-    { { "cmd", "alt", "shift" }, "1", "CSV→TXT", function() scripts.convert.csv_to_txt() end },
-    { { "cmd", "alt", "shift" }, "2", "CSV→XLSX", function() scripts.convert.csv_to_xlsx() end },
-    { { "cmd", "alt", "shift" }, "3", "TXT→CSV", function() scripts.convert.txt_to_csv() end },
-    { { "cmd", "alt", "shift" }, "4", "XLSX→CSV", function() scripts.convert.xlsx_to_csv() end },
-
-    -- 文档转换
-    { { "cmd", "alt", "shift" }, "d", "DOCX→MD", function() scripts.convert.docx_to_md() end },
-    { { "cmd", "alt", "shift" }, "p", "PPTX→MD", function() scripts.convert.pptx_to_md() end },
-
-    -- 批量转换
-    { { "cmd", "alt", "shift" }, "a", "批量转换所有", function()
-        scripts.convert.office_batch({ all = true, recursive = true })
-    end },
-}
 
 -- ===== 内容提取热键 =====
 
-local extract_hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "i", "提取图片", function() scripts.extract.images() end },
-    { { "cmd", "ctrl", "shift" }, "t", "提取表格", function() scripts.extract.tables() end },
-    { { "cmd", "ctrl", "shift" }, "k", "计算Tokens", function() scripts.extract.text_tokens() end },
-}
 
 -- ===== 文件管理热键 =====
 
-local file_hotkeys = {
-    { { "cmd", "ctrl", "alt" }, "u", "文件上移", function() scripts.file.move_up_level() end },
-    { { "cmd", "ctrl", "alt" }, "c", "合并CSV", function() scripts.merge.csv_files() end },
-    { { "cmd", "ctrl", "alt" }, "m", "合并Markdown", function() scripts.merge.markdown_files() end },
-}
 
 -- ===== 应用管理热键 =====
 
 local manage_hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "l", "启动应用", function() scripts.manage.launch_apps() end },
-    { { "cmd", "ctrl", "shift" }, "p", "Python包管理", function() scripts.manage.pip_packages() end },
+    { { "cmd", "alt" }, ",", "设置", function()
+        -- 打开 Mac 系统设置应用
+        -- 兼容不同 macOS 版本的设置应用名称
+        local success = hs.application.launchOrFocus("System Settings")
+        if not success then
+            -- 兼容旧版本 macOS
+            success = hs.application.launchOrFocus("System Preferences")
+        end
+        if success then
+            hs.alert.show("已打开系统设置")
+        else
+            hs.alert.show("无法打开系统设置")
+        end
+    end },
 }
 
 -- ===== 智能上下文菜单 =====
@@ -243,5 +229,8 @@ function scripts_hotkeys.show_help()
 
     hs.alert.show(help_text, 10)
 end
+
+-- 自动初始化
+scripts_hotkeys.init()
 
 return scripts_hotkeys

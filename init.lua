@@ -1,25 +1,9 @@
-function requireAllFromDirectory(directory)
-    local path = hs.configdir .. '/' .. directory
-    if not hs.fs.attributes(path, "mode") then
-        hs.alert.show('目录不存在: ' .. path)
-        return
-    end
-    local iter, dir_obj = hs.fs.dir(path)
-    if not iter then
-        hs.alert.show('无法打开目录: ' .. path)
-        return
-    end
-    for file in iter, dir_obj do
-        if file:sub(-4) == ".lua" then
-            local module = directory .. '.' .. file:sub(1, -5)
-            require(module)
-        end
-    end
-end
+-- Hammerspoon 主配置文件 (使用 lua_comb 统一模块)
 
-requireAllFromDirectory("lua")
-requireAllFromDirectory("lua1")
--- requireAllFromDirectory("temp")
+-- 加载 lua_comb 统一模块
+print("🚀 开始加载 Hammerspoon 配置...")
+local lua_comb = require("lua_comb.init")
+
 -- 配置文件自动重载功能
 function reloadConfig(files)
     local doReload = false
@@ -34,9 +18,15 @@ function reloadConfig(files)
     end
 end
 
+-- 监听配置文件变化
 myWatcher = hs.pathwatcher.new(hs.configdir .. "/", reloadConfig):start()
 
 -- Enable IPC for command line access
 hs.ipc.cliInstall()
 
-hs.alert.show("Config Loaded")
+-- 显示加载完成信息
+hs.alert.show("✅ Hammerspoon 配置已加载 (lua_comb)")
+print("✅ Hammerspoon 配置加载完成，按 ⌘⌃⌥⇧+H 查看快捷键帮助")
+
+-- 导出主模块供调试使用
+return lua_comb
