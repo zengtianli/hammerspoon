@@ -23,10 +23,17 @@
   - `⌘⇧+N`: 创建新文件夹
 
 ### `macro_controls.lua` - 宏控制
-- **功能**: 宏录制/播放，调用shell脚本
+- **功能**: 配置驱动的宏播放系统，调用shell脚本
+- **配置**: 通过 `macro_config` 表动态映射快捷键到宏名称
+- **API**: `macro_play(name)`, `update_macro_config(config)`
+
+### `macro_hotkeys.lua` - 宏快捷键
+- **功能**: 独立的宏快捷键管理，方便debug和维护
 - **热键**:
-  - `⌘⌃⇧+M`: 宏录制/记录位置
-  - `⌘⌃⇧⌥+P`: 宏播放(demo)
+  - `⌘⌃⇧⌥+1`: 宏播放(login)
+  - `⌘⌃⇧⌥+2`: 宏播放(daily)
+  - `⌘⌃⇧⌥+3`: 宏播放(demo)
+- **API**: `bind_macro_hotkeys()`, `unbind_macro_hotkeys()`, `rebind_macro_hotkeys()`
 
 ### `clipboard_utils.lua` - 剪贴板工具
 - **功能**: 复制文件名/内容，智能粘贴文件

@@ -1,6 +1,7 @@
-local scripts, apps, runner, utils, mouse_follow, macro = require("lua1.scripts_caller"), require("lua1.app_controls"),
+local scripts, apps, runner, utils, mouse_follow, macro_hotkeys = require("lua1.scripts_caller"),
+    require("lua1.app_controls"),
     require("lua1.script_runner"), require("lua1.common_utils"), require("lua1.mouse_follow_control"),
-    require("lua1.macro_controls")
+    require("lua1.macro_hotkeys")
 
 -- 热键和转换配置
 local hotkeys = {
@@ -9,8 +10,6 @@ local hotkeys = {
     { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", apps.open_cursor_here },
     { { "cmd", "ctrl", "shift" }, "v", "Nvim在Ghostty中打开文件", apps.open_file_in_nvim_ghostty },
     { { "cmd", "shift" }, "n", "创建新文件夹", apps.create_folder },
-    -- 宏控制
-    { { "cmd", "ctrl", "shift", "alt" }, "p", "宏播放(demo)", macro.macro_play },
     -- 鼠标控制
     { { "cmd", "ctrl", "shift", "alt" }, "f", "切换鼠标跟随", mouse_follow.toggle_mouse_follow },
     -- 脚本运行
@@ -59,6 +58,9 @@ end
 local function init()
     local count = utils.register_hotkeys(hotkeys, { { { "cmd", "ctrl", "alt" }, "space", "智能转换菜单", show_context_menu } })
 
+    -- 绑定宏快捷键 (单独管理)
+    macro_hotkeys.bind_macro_hotkeys()
+
     -- 应用切换监控
     hs.application.watcher.new(function(appName, eventType)
         if appName == "Finder" and eventType == hs.application.watcher.activated then
@@ -73,12 +75,20 @@ end
 
 -- 帮助信息
 local function show_help()
+    -- 获取宏快捷键信息
+    local macro_help = ""
+    local macro_info = macro_hotkeys.get_hotkey_info()
+    for i, info in ipairs(macro_info) do
+        macro_help = macro_help .. "  " .. info.key .. ": " .. info.description
+        if i < #macro_info then macro_help = macro_help .. "  " end
+    end
+
     hs.alert.show([[🔥 Scripts Hotkeys 快捷键说明
 📱 应用控制:
   ⌘⌃⇧+T: Ghostty在此处打开  ⌘⌃⇧+W: Cursor在此处打开
   ⌘⌃⇧+V: Nvim在Ghostty中打开文件  ⌘⇧+N: 创建新文件夹
 🎬 宏控制:
-  ⌘⌃⇧+M: 宏录制/记录位置  ⌘⌃⇧⌥+P: 宏播放(demo)
+]] .. macro_help .. [[
 🖱️ 鼠标控制:
   ⌘⌃⇧⌥+F: 切换鼠标跟随
 🏃 脚本运行:
