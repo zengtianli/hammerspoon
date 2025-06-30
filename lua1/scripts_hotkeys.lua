@@ -1,5 +1,6 @@
-local scripts, apps, runner, utils, mouse_follow = require("lua1.scripts_caller"), require("lua1.app_controls"),
-    require("lua1.script_runner"), require("lua1.common_utils"), require("lua1.mouse_follow_control")
+local scripts, apps, runner, utils, mouse_follow, macro = require("lua1.scripts_caller"), require("lua1.app_controls"),
+    require("lua1.script_runner"), require("lua1.common_utils"), require("lua1.mouse_follow_control"),
+    require("lua1.macro_controls")
 
 -- 热键和转换配置
 local hotkeys = {
@@ -9,7 +10,7 @@ local hotkeys = {
     { { "cmd", "ctrl", "shift" }, "v", "Nvim在Ghostty中打开文件", apps.open_file_in_nvim_ghostty },
     { { "cmd", "shift" }, "n", "创建新文件夹", apps.create_folder },
     -- 宏控制
-    { { "cmd", "ctrl", "shift" }, "m", "宏录制/记录位置", apps.macro_record },
+    { { "cmd", "ctrl", "shift", "alt" }, "p", "宏播放(demo)", macro.macro_play },
     -- 鼠标控制
     { { "cmd", "ctrl", "shift", "alt" }, "f", "切换鼠标跟随", mouse_follow.toggle_mouse_follow },
     -- 脚本运行
@@ -77,7 +78,7 @@ local function show_help()
   ⌘⌃⇧+T: Ghostty在此处打开  ⌘⌃⇧+W: Cursor在此处打开
   ⌘⌃⇧+V: Nvim在Ghostty中打开文件  ⌘⇧+N: 创建新文件夹
 🎬 宏控制:
-  ⌘⌃⇧+M: 宏录制/记录位置
+  ⌘⌃⇧+M: 宏录制/记录位置  ⌘⌃⇧⌥+P: 宏播放(demo)
 🖱️ 鼠标控制:
   ⌘⌃⇧⌥+F: 切换鼠标跟随
 🏃 脚本运行:
