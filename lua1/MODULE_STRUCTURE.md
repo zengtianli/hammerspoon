@@ -23,9 +23,16 @@
   - `⌘⇧+N`: 创建新文件夹
 
 ### `macro_controls.lua` - 宏控制
-- **功能**: 配置驱动的宏播放系统，调用shell脚本
+- **功能**: 配置驱动的宏播放系统，**高性能Lua实现**
 - **配置**: 通过 `macro_config` 表动态映射快捷键到宏名称
-- **API**: `macro_play(name)`, `update_macro_config(config)`
+- **API**: `macro_play(name)`, `macro_play_async(name)`, `update_macro_config(config)`
+- **性能**: 使用纯Lua实现，响应时间 < 100ms
+
+### `macro_player.lua` - 高性能宏播放器
+- **功能**: 纯Lua实现的宏播放引擎，替代shell脚本
+- **特性**: 同步/异步播放，极低延迟(50ms间隔)
+- **兼容性**: 支持命令行和Hammerspoon环境
+- **API**: `play_macro_fast(name)`, `play_macro_async(name, callback)`
 
 ### `macro_hotkeys.lua` - 宏快捷键
 - **功能**: 独立的宏快捷键管理，方便debug和维护

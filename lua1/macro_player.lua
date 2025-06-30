@@ -11,7 +11,19 @@ local function read_macro_file(macro_name)
     local macro_file = MACRO_DIR .. "/macro_" .. macro_name .. ".txt"
 
     -- 检查文件是否存在
-    if not hs.fs.attributes(macro_file, "mode") then
+    local file_exists = false
+    if hs and hs.fs then
+        file_exists = hs.fs.attributes(macro_file, "mode") ~= nil
+    else
+        -- 兼容模式：尝试打开文件
+        local test_file = io.open(macro_file, "r")
+        if test_file then
+            test_file:close()
+            file_exists = true
+        end
+    end
+
+    if not file_exists then
         return nil, "宏文件不存在: " .. macro_name
     end
 
@@ -43,14 +55,26 @@ end
 -- 快速播放宏 (同步版本)
 macro_player.play_macro_fast = function(macro_name)
     if not macro_name or macro_name == "" then
-        utils.show_error_notification("宏播放", "宏名称不能为空")
+        if utils then
+            utils.show_error_notification("宏播放", "宏名称不能为空")
+        end
+        return false
+    end
+
+    -- 检查 Hammerspoon 环境
+    if not (hs and hs.mouse and hs.eventtap) then
+        if utils then
+            utils.show_error_notification("宏播放", "需要在 Hammerspoon 环境中运行")
+        end
         return false
     end
 
     -- 读取宏文件
     local positions, error_msg = read_macro_file(macro_name)
     if not positions then
-        utils.show_error_notification("宏播放", error_msg)
+        if utils then
+            utils.show_error_notification("宏播放", error_msg)
+        end
         return false
     end
 
@@ -126,16 +150,31 @@ end
 macro_player.get_available_macros = function()
     local macros = {}
 
-    -- 确保目录存在
-    if not hs.fs.attributes(MACRO_DIR, "mode") then
-        return macros
-    end
+    -- 检查 hs 是否可用
+    if hs and hs.fs then
+        -- 确保目录存在
+        if not hs.fs.attributes(MACRO_DIR, "mode") then
+            return macros
+        end
 
-    -- 遍历宏文件
-    for file in hs.fs.dir(MACRO_DIR) do
-        if file:match("^macro_(.+)%.txt$") then
-            local macro_name = file:match("^macro_(.+)%.txt$")
-            table.insert(macros, macro_name)
+        -- 遍历宏文件
+        for file in hs.fs.dir(MACRO_DIR) do
+            if file:match("^macro_(.+)%.txt$") then
+                local macro_name = file:match("^macro_(.+)%.txt$")
+                table.insert(macros, macro_name)
+            end
+        end
+    else
+        -- 兼容模式：使用命令行工具
+        local handle = io.popen("ls '" .. MACRO_DIR .. "'/macro_*.txt 2>/dev/null")
+        if handle then
+            for line in handle:lines() do
+                local macro_name = line:match("macro_(.+)%.txt$")
+                if macro_name then
+                    table.insert(macros, macro_name)
+                end
+            end
+            handle:close()
         end
     end
 

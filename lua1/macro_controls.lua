@@ -1,4 +1,5 @@
 local utils = require("lua1.common_utils")
+local macro_player = require("lua1.macro_player")
 
 -- 宏控制模块
 local macro_controls = {}
@@ -11,40 +12,42 @@ local macro_config = {
     ["4"] = "4", -- ⌘⌃⇧⌥+4 播放4宏
 }
 
--- 宏播放控制 (通用函数)
+-- 宏播放控制 (高性能版本)
 macro_controls.macro_play = function(macro_name)
     if not macro_name or macro_name == "" then
         utils.show_error_notification("宏播放", "宏名称不能为空")
         return
     end
 
-    local script_path = os.getenv("HOME") .. "/.config/hammerspoon/scripts/macro_play.sh"
+    utils.debug_print("宏播放", "开始播放宏: " .. macro_name)
 
-    -- 检查脚本文件是否存在
-    if not hs.fs.attributes(script_path, "mode") then
-        utils.show_error_notification("宏播放", "脚本文件不存在: " .. script_path)
+    -- 使用高性能播放器
+    local success = macro_player.play_macro_fast(macro_name)
+
+    if success then
+        utils.show_success_notification("宏播放", "宏播放完成: " .. macro_name)
+    else
+        -- 错误信息已在 macro_player 中显示
+        utils.debug_print("宏播放", "播放失败: " .. macro_name)
+    end
+end
+
+-- 异步宏播放 (更流畅，可选)
+macro_controls.macro_play_async = function(macro_name)
+    if not macro_name or macro_name == "" then
+        utils.show_error_notification("宏播放", "宏名称不能为空")
         return
     end
 
-    utils.show_success_notification("宏播放", "正在播放宏: " .. macro_name)
-    utils.debug_print("宏播放", "脚本路径: " .. script_path)
-    utils.debug_print("宏播放", "开始播放宏: " .. macro_name)
+    utils.debug_print("宏播放", "开始异步播放宏: " .. macro_name)
 
-    hs.task.new("/bin/bash", function(exit_code, stdout, stderr)
-        utils.debug_print("宏播放", "退出代码: " .. tostring(exit_code))
-        if stdout and stdout ~= "" then
-            utils.debug_print("宏播放", "输出: " .. stdout)
-        end
-        if stderr and stderr ~= "" then
-            utils.debug_print("宏播放", "错误: " .. stderr)
-        end
-
-        if exit_code == 0 then
+    macro_player.play_macro_async(macro_name, function(success)
+        if success then
             utils.show_success_notification("宏播放", "宏播放完成: " .. macro_name)
         else
-            utils.show_error_notification("宏播放", "播放失败(代码:" .. tostring(exit_code) .. "): " .. (stderr or "未知错误"))
+            utils.debug_print("宏播放", "异步播放失败: " .. macro_name)
         end
-    end, { script_path, macro_name }):start()
+    end)
 end
 
 -- 根据快捷键编号播放宏的工厂函数
@@ -66,16 +69,29 @@ for key, macro_name in pairs(macro_config) do
     utils.debug_print("宏配置", "已创建函数: " .. func_name .. " -> " .. macro_name)
 end
 
--- 宏选择播放菜单
+-- 宏选择播放菜单 (高性能版本)
 macro_controls.macro_play_menu = function()
-    local script_path = os.getenv("HOME") .. "/.config/hammerspoon/scripts/macro_play.sh"
+    -- 获取可用宏列表
+    local macros = macro_player.get_available_macros()
 
-    -- 调用 macro_play.sh 不带参数来显示选择菜单
-    hs.task.new("/bin/bash", function(exit_code, stdout, stderr)
-        if exit_code ~= 0 and stderr then
-            utils.show_error_notification("宏播放菜单", "菜单显示失败: " .. stderr)
-        end
-    end, { script_path }):start()
+    if #macros == 0 then
+        utils.show_error_notification("宏播放菜单", "没有找到任何宏")
+        return
+    end
+
+    -- 构建菜单选项
+    local menu_items = {}
+    for i, macro_name in ipairs(macros) do
+        table.insert(menu_items, {
+            title = macro_name,
+            fn = function()
+                macro_controls.macro_play(macro_name)
+            end
+        })
+    end
+
+    -- 显示选择菜单
+    utils.show_popup_menu(menu_items)
 end
 
 -- 获取宏配置信息 (调试用)
