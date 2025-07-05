@@ -11,11 +11,6 @@ function M.openSystemSettings()
         -- 兼容旧版本 macOS
         success = hs.application.launchOrFocus("System Preferences")
     end
-    if success then
-        hs.alert.show("已打开系统设置")
-    else
-        hs.alert.show("无法打开系统设置")
-    end
 end
 
 -- 初始化快捷键

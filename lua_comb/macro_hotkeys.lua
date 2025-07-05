@@ -10,6 +10,11 @@ local macro_hotkey_configs = {
     { { "cmd", "ctrl", "shift" }, "3", "宏播放3", "macro_play_3" },
     { { "cmd", "ctrl", "shift" }, "4", "宏播放4", "macro_play_4" },
     { { "cmd", "ctrl", "shift" }, "5", "宏播放5", "macro_play_5" },
+    { { "cmd", "ctrl", "shift" }, "6", "宏播放6", "macro_play_6" },
+    { { "cmd", "ctrl", "shift" }, "7", "宏播放7", "macro_play_7" },
+    { { "cmd", "ctrl", "shift" }, "8", "宏播放8", "macro_play_8" },
+    { { "cmd", "ctrl", "shift" }, "9", "宏播放9", "macro_play_9" },
+    { { "cmd", "ctrl", "shift" }, "0", "宏播放10", "macro_play_10" },
 }
 
 -- 存储已绑定的快捷键对象
