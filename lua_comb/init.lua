@@ -39,6 +39,9 @@ modules.macro_hotkeys.bind_macro_hotkeys()
 -- 应用控制
 modules.app_controls = require("lua_comb.app_controls")
 
+-- 文件压缩
+modules.compress_controls = require("lua_comb.compress_controls")
+
 -- 剪贴板工具
 modules.clipboard_utils = require("lua_comb.clipboard_utils")
 modules.clipboard_hotkeys = require("lua_comb.clipboard_hotkeys")

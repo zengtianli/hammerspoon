@@ -48,34 +48,24 @@ clipboard_utils.copy_names_and_content = function()
     utils.show_success_notification("文件名和内容复制成功", utils.get_count_message(successful_count, "复制", "") .. "的名称和内容到剪贴板")
 end
 
--- 粘贴到Finder的主要功能（仅支持文件粘贴）
+-- 粘贴到Finder的功能，通过调用外部shell脚本实现
 clipboard_utils.paste_to_finder = function(target_dir)
-    target_dir = target_dir or utils.get_finder_current_dir()
-    if not target_dir then return hs.alert.show("❌ 无法获取Finder当前目录") end
+    local script_path = hs.configdir .. "/scripts_ray/finder_paste.sh"
+    local command_args = { script_path }
 
-    local dir_attrs = hs.fs.attributes(target_dir)
-    if not dir_attrs or dir_attrs.mode ~= "directory" then
-        return hs.alert.show("❌ 目录不存在：" .. (target_dir or ""))
+    -- 如果提供了目标目录，则将其作为参数传递给脚本
+    if target_dir then
+        table.insert(command_args, target_dir)
     end
 
-    local clipboard_type = utils.detect_clipboard_type()
-    if clipboard_type == "empty" then return hs.alert.show("❌ 剪贴板为空") end
-    if clipboard_type ~= "files" then return hs.alert.show("❌ 剪贴板不包含文件，仅支持文件粘贴") end
-
-    hs.alert.show("📋 正在粘贴到 " .. hs.fs.displayName(target_dir) .. "...")
-
-    utils.execute_applescript(string.format([[
-        tell application "Finder"
-            activate
-            set targetFolder to POSIX file "%s" as alias
-            open targetFolder
-            delay 0.2
-        end tell
-        tell application "System Events"
-            delay 0.2
-            keystroke "v" using command down
-        end tell
-    ]], target_dir), "文件已粘贴到 " .. hs.fs.displayName(target_dir), "粘贴失败")
+    -- 脚本会自己处理成功或失败的通知，这里我们只在后台记录日志
+    hs.task.new("/bin/bash", function(exit_code, stdout, stderr)
+        if exit_code ~= 0 then
+            utils.log("PasteToFinder", "脚本执行失败: " .. (stderr or stdout))
+        else
+            utils.log("PasteToFinder", "脚本执行成功")
+        end
+    end, command_args):start()
 end
 
 print("📋 Clipboard Utils 模块已加载")

@@ -2,6 +2,7 @@
 local utils = require("lua_comb.common_utils")
 local app_controls = require("lua_comb.app_controls")
 local script_runner = require("lua_comb.script_runner")
+local compress_controls = require("lua_comb.compress_controls")
 
 local M = {}
 
@@ -19,6 +20,11 @@ local script_hotkeys = {
     { { "cmd", "ctrl", "shift" }, "r", "并行运行脚本", script_runner.run_parallel },
 }
 
+-- 文件压缩快捷键
+local compression_hotkeys = {
+    { { "cmd", "ctrl", "shift" }, "k", "压缩选中文件", compress_controls.compress_selection },
+}
+
 -- 初始化所有快捷键
 function M.init()
     local total_count = 0
@@ -28,6 +34,9 @@ function M.init()
 
     -- 注册脚本运行快捷键
     total_count = total_count + utils.register_hotkeys(script_hotkeys)
+
+    -- 注册文件压缩快捷键
+    total_count = total_count + utils.register_hotkeys(compression_hotkeys)
 
     utils.log("HotkeysManager", "统一快捷键管理已初始化，共注册 " .. total_count .. " 个快捷键")
     return total_count
@@ -65,6 +74,9 @@ function M.show_help()
   ⌘⌃⇧+N: 复制文件名
   ⌘⌃⇧+C: 复制文件名和内容
   ⌃⌥+V: 粘贴到Finder
+
+📦 文件操作:
+  ⌘⌃⇧+K: 压缩选中文件/文件夹
 
 📱 应用快捷键:
   ⌘⇧+Q: 重启当前应用
