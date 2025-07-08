@@ -15,7 +15,7 @@ if pgrep -f "Zen" > /dev/null; then
     tell application "Zen"
         activate
     end tell
-    delay 0.5
+    delay 0.8
     
     -- 发送空格键
     tell application "System Events"
