@@ -18,42 +18,29 @@ local macro_config = {
     ["0"] = "10", -- ⌘⌃⇧+0 播放10宏
 }
 
--- 宏播放控制 (高性能版本)
+-- 宏播放控制 (由 macro_player 模块驱动)
 macro_controls.macro_play = function(macro_name)
     if not macro_name or macro_name == "" then
         utils.show_error_notification("宏播放", "宏名称不能为空")
         return
     end
 
-    utils.debug_print("宏播放", "开始播放宏: " .. macro_name)
-
-    -- 使用高性能播放器
-    local success = macro_player.play_macro_fast(macro_name)
-
-    if success then
-        utils.show_success_notification("宏播放", "宏播放完成: " .. macro_name)
-    else
-        -- 错误信息已在 macro_player 中显示
-        utils.debug_print("宏播放", "播放失败: " .. macro_name)
-    end
+    utils.debug_print("宏播放", "请求播放宏: " .. macro_name)
+    macro_player.play_macro(macro_name)
 end
 
--- 异步宏播放 (更流畅，可选)
-macro_controls.macro_play_async = function(macro_name)
-    if not macro_name or macro_name == "" then
-        utils.show_error_notification("宏播放", "宏名称不能为空")
-        return
-    end
+-- 调用脚本录制宏的一个步骤（或开始录制）
+macro_controls.record_step = function()
+    local script_path = hs.configdir .. "/scripts/macro_record.sh"
+    utils.log("MacroControls", "调用脚本录制宏步骤")
+    hs.task.new("/bin/bash", nil, { script_path }):start()
+end
 
-    utils.debug_print("宏播放", "开始异步播放宏: " .. macro_name)
-
-    macro_player.play_macro_async(macro_name, function(success)
-        if success then
-            utils.show_success_notification("宏播放", "宏播放完成: " .. macro_name)
-        else
-            utils.debug_print("宏播放", "异步播放失败: " .. macro_name)
-        end
-    end)
+-- 调用脚本停止宏录制
+macro_controls.stop_recording = function()
+    local script_path = hs.configdir .. "/scripts/macro_stop.sh"
+    utils.log("MacroControls", "调用脚本停止宏录制")
+    hs.task.new("/bin/bash", nil, { script_path }):start()
 end
 
 -- 根据快捷键编号播放宏的工厂函数

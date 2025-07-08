@@ -3,6 +3,7 @@ local utils = require("lua_comb.common_utils")
 local app_controls = require("lua_comb.app_controls")
 local script_runner = require("lua_comb.script_runner")
 local compress_controls = require("lua_comb.compress_controls")
+local macro_controls = require("lua_comb.macro_controls")
 
 local M = {}
 
@@ -22,8 +23,15 @@ local script_hotkeys = {
 
 -- 文件压缩快捷键
 local compression_hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "k", "压缩选中文件", compress_controls.compress_selection },
+    { { "alt", "ctrl" }, "c", "压缩选中文件", compress_controls.compress_selection },
 }
+
+-- 宏录制快捷键
+local macro_recording_hotkeys = {
+    { { "cmd", "ctrl", "shift" }, "[", "录制/标记宏点", macro_controls.record_step },
+    { { "cmd", "ctrl", "shift" }, "]", "停止宏录制", macro_controls.stop_recording },
+}
+
 
 -- 初始化所有快捷键
 function M.init()
@@ -37,6 +45,9 @@ function M.init()
 
     -- 注册文件压缩快捷键
     total_count = total_count + utils.register_hotkeys(compression_hotkeys)
+
+    -- 注册宏录制快捷键
+    total_count = total_count + utils.register_hotkeys(macro_recording_hotkeys)
 
     utils.log("HotkeysManager", "统一快捷键管理已初始化，共注册 " .. total_count .. " 个快捷键")
     return total_count
@@ -64,6 +75,8 @@ function M.show_help()
   ⌘⌃⇧+P: 系统媒体播放/暂停
 
 🎬 宏控制:
+  录制/标记点: ⌘⌃⇧+[
+  停止录制:    ⌘⌃⇧+]
   ⌘⌃⇧+1: 播放宏1      ⌘⌃⇧+6: 播放宏6
   ⌘⌃⇧+2: 播放宏2      ⌘⌃⇧+7: 播放宏7
   ⌘⌃⇧+3: 播放宏3      ⌘⌃⇧+8: 播放宏8
