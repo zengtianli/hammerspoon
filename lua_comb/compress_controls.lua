@@ -5,7 +5,7 @@ local M = {}
 
 -- 调用脚本来压缩在Finder中选中的文件
 function M.compress_selection()
-    local script_path = hs.configdir .. "/scripts_ray/finder_compress.sh"
+    local script_path = hs.configdir .. "/scripts_common/finder_compress.sh"
 
     utils.log("CompressControls", "正在调用压缩脚本: " .. script_path)
 

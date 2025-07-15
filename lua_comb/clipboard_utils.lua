@@ -50,7 +50,7 @@ end
 
 -- 粘贴到Finder的功能，通过调用外部shell脚本实现
 clipboard_utils.paste_to_finder = function(target_dir)
-    local script_path = hs.configdir .. "/scripts_ray/finder_paste.sh"
+    local script_path = hs.configdir .. "/scripts_common/finder_paste.sh"
     local command_args = { script_path }
 
     -- 如果提供了目标目录，则将其作为参数传递给脚本
