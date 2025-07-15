@@ -10,8 +10,8 @@ local M = {}
 -- -----------------------------------------------------------------------------
 -- 用户配置: 在这里选择你偏好的应用
 -- -----------------------------------------------------------------------------
-local preferred_terminal = "Warp" -- 可选: "Ghostty", "Warp"
-local preferred_ide = "Windsurf"  -- 可选: "Cursor", "Windsurf"
+local preferred_terminal = "Ghostty" -- 可选: "Ghostty", "Warp"
+local preferred_ide = "Windsurf"     -- 可选: "Cursor", "Windsurf"
 -- -----------------------------------------------------------------------------
 
 -- 根据配置选择对应的函数
