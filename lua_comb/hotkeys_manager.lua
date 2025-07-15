@@ -7,10 +7,34 @@ local macro_controls = require("lua_comb.macro_controls")
 
 local M = {}
 
+-- -----------------------------------------------------------------------------
+-- 用户配置: 在这里选择你偏好的应用
+-- -----------------------------------------------------------------------------
+local preferred_terminal = "Warp" -- 可选: "Ghostty", "Warp"
+local preferred_ide = "Windsurf"  -- 可选: "Cursor", "Windsurf"
+-- -----------------------------------------------------------------------------
+
+-- 根据配置选择对应的函数
+local terminal_actions = {
+    Ghostty = { func = app_controls.open_ghostty_here, name = "Ghostty" },
+    Warp = { func = app_controls.open_warp_here, name = "Warp" },
+}
+
+local ide_actions = {
+    Cursor = { func = app_controls.open_cursor_here, name = "Cursor" },
+    Windsurf = { func = app_controls.open_windsurf_here, name = "Windsurf" },
+}
+
+local selected_terminal = terminal_actions[preferred_terminal] or terminal_actions.Ghostty
+local selected_ide = ide_actions[preferred_ide] or ide_actions.Cursor
+
 -- 应用控制快捷键
 local app_hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "t", "Ghostty在此处打开", app_controls.open_ghostty_here },
-    { { "cmd", "ctrl", "shift" }, "w", "Cursor在此处打开", app_controls.open_cursor_here },
+    -- 动态快捷键
+    { { "cmd", "ctrl", "shift" }, "t", "Term: " .. selected_terminal.name .. " 在此处打开", selected_terminal.func },
+    { { "cmd", "ctrl", "shift" }, "w", "IDE: " .. selected_ide.name .. " 在此处打开", selected_ide.func },
+
+    -- 其他固定快捷键
     { { "cmd", "ctrl", "shift" }, "i", "Nvim在Ghostty中打开文件", app_controls.open_file_in_nvim_ghostty },
     { { "cmd", "shift" }, "n", "创建新文件夹", app_controls.create_folder },
 }
@@ -28,8 +52,8 @@ local compression_hotkeys = {
 
 -- 宏录制快捷键
 local macro_recording_hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "[", "录制/标记宏点", macro_controls.record_step },
-    { { "cmd", "ctrl", "shift" }, "]", "停止宏录制", macro_controls.stop_recording },
+    -- { { "cmd", "ctrl", "shift" }, "[", "录制/标记宏点", macro_controls.record_step },
+    -- { { "cmd", "ctrl", "shift" }, "]", "停止宏录制", macro_controls.stop_recording },
 }
 
 

@@ -6,8 +6,14 @@ local app_controls = {}
 -- 在终端应用中打开目录
 app_controls.open_ghostty_here = function()
     local dir = utils.get_finder_current_dir()
-    utils.run_command_in_app("Ghostty", string.format('cd "%s"', dir), { "cmd", "n" })
+    utils.run_command_in_app("Ghostty", string.format('cd \"%s\"', dir), { "cmd", "n" })
     utils.show_success_notification("Ghostty", "已在 " .. hs.fs.displayName(dir) .. " 中打开")
+end
+
+app_controls.open_warp_here = function()
+    local dir = utils.get_finder_current_dir()
+    utils.run_command_in_app("Warp", string.format('cd \"%s\"', dir), { "cmd", "t" })
+    utils.show_success_notification("Warp", "已在 " .. hs.fs.displayName(dir) .. " 中打开")
 end
 
 app_controls.open_terminal_here = function()
@@ -37,6 +43,14 @@ app_controls.open_cursor_here = function()
     hs.task.new("/usr/local/bin/cursor", function(exit_code)
         if exit_code ~= 0 then hs.application.open("Cursor") end
         utils.show_success_notification("Cursor", "已启动 Cursor")
+    end, { dir }):start()
+end
+
+app_controls.open_windsurf_here = function()
+    local dir = utils.get_finder_current_dir()
+    hs.task.new("/usr/local/bin/windsurf", function(exit_code)
+        if exit_code ~= 0 then hs.application.open("Windsurf") end
+        utils.show_success_notification("Windsurf", "已启动 Windsurf")
     end, { dir }):start()
 end
 
