@@ -16,26 +16,23 @@
 
 ## 1. 核心理念
 
-通过整合多个 Lua 模块，本配置实现了一个强大的、以快捷键为中心的自动化工作流。它简化了诸如“在当前目录打开终端”、“运行脚本”、“批量复制文件名”等高频操作，将复杂的多步任务简化为一次按键，从而实现高效的桌面操作。
+通过模块化设计的 Lua 模块，本配置实现了一个强大的、以快捷键为中心的自动化工作流。它简化了诸如"在当前目录打开终端"、"运行脚本"、"批量复制文件名"等高频操作，将复杂的多步任务简化为一次按键，从而实现高效的桌面操作。
 
 ## 2. 模块概览
 
 您的 Hammerspoon 配置是模块化的，各个文件职责分明，共同构成了强大的功能矩阵。
 
-| 模块文件 | 核心职责 |
+| 目录/文件 | 核心职责 |
 | :--- | :--- |
-| `init.lua` | **统一加载器**，负责按顺序加载所有 `lua_comb` 子模块并处理依赖。 |
-| `hotkeys_manager.lua` | **快捷键中枢**，注册和管理非核心功能的快捷键，并提供配置选项。 |
-| `common_utils.lua` | **通用工具库**，提供其他模块共享的辅助函数（如发通知、获取路径等）。 |
-| `app_controls.lua` | **应用控制核心**，封装与 Finder、终端、IDE 等应用交互的逻辑。 |
-| `app_restart.lua` | **应用重启工具**，提供快速重启当前应用的快捷键。 |
-| `system_shortcuts.lua` | **系统级快捷键**，提供例如快速打开系统设置等功能。 |
-| `clipboard_*.lua` | **剪贴板工具集**，包含 `_utils` (功能实现) 和 `_hotkeys` (快捷键绑定)。 |
-| `compress_controls.lua` | **文件压缩工具**，用于快速压缩 Finder 中选中的项目。 |
-| `script_runner.lua` | **脚本执行器**，提供从 Finder 直接运行脚本文件的能力。 |
-| `macro_*.lua` | **宏系统**，由 `_controls`, `_hotkeys`, `_player` 组成，负责宏的录制、播放和管理。 |
-| `music_controls.lua` | **媒体控制中心**，提供对音乐应用、浏览器及系统的播放控制。 |
-| `wechat_launcher.lua` | **微信快速启动器**，提供一键启动或聚焦微信的快捷方式。 |
+| `init.lua` | **统一加载器**，负责初始化配置和模块加载。 |
+| `config/settings.lua` | **用户设置**，包含可自定义的配置选项。 |
+| `config/hotkeys.lua` | **快捷键定义**，集中管理所有快捷键绑定。 |
+| `modules/core/` | **核心功能**，包含工具库、脚本执行器和热键管理等基础功能。 |
+| `modules/apps/` | **应用控制**，提供与各种应用的交互功能。 |
+| `modules/tools/` | **工具集**，包括剪贴板、压缩和系统操作等实用工具。 |
+| `modules/media/` | **媒体控制**，用于控制音乐播放和系统媒体。 |
+| `modules/macro/` | **宏系统**，提供录制和播放宏的功能。 |
+| `scripts/` | **脚本目录**，按功能分类存放各种辅助脚本。 |
 
 ## 3. 功能详解与快捷键
 
@@ -43,27 +40,27 @@
 
 | 快捷键 | 功能描述 | 来源模块 |
 | :--- | :--- | :--- |
-| `⌘ + ⌃ + ⌥ + ⇧ + H` | **显示快捷键帮助**，弹窗列出所有主要快捷键。 | `init.lua` |
-| `⌘ + ⌥ + ,` | **打开系统设置**，兼容新旧版 macOS。 | `system_shortcuts.lua` |
-| `⌘ + ⇧ + Q` | **重启当前应用**，通过 `app_restart.sh` 脚本实现。 | `app_restart.lua` |
+| `⌘ + ⌃ + ⌥ + ⇧ + H` | **显示快捷键帮助**，弹窗列出所有主要快捷键。 | `modules/core/hotkeys.lua` |
+| `⌘ + ⌥ + ,` | **打开系统设置**，兼容新旧版 macOS。 | `modules/tools/system.lua` |
+| `⌘ + ⇧ + Q` | **重启当前应用**，通过外部脚本实现。 | `modules/apps/restart.lua` |
 
 ### 3.2 Finder 与文件操作
 
 | 快捷键 | 功能描述 | 来源模块 |
 | :--- | :--- | :--- |
-| `⌘ + ⌃ + ⇧ + T` | 在当前 Finder 目录打开**偏好的终端**。 | `hotkeys_manager.lua` |
-| `⌘ + ⌃ + ⇧ + W` | 在当前 Finder 目录打开**偏好的 IDE**。 | `hotkeys_manager.lua` |
-| `⌘ + ⌃ + ⇧ + I` | 在 Ghostty (Nvim) 中打开选中的文件。 | `hotkeys_manager.lua` |
-| `⌘ + ⇧ + N` | 在当前 Finder 目录创建新文件夹。 | `hotkeys_manager.lua` |
-| `⌥ + ⌃ + C` | **压缩选中项**，将 Finder 中选中的文件/文件夹压缩。 | `compress_controls.lua` |
+| `⌘ + ⌃ + ⇧ + T` | 在当前 Finder 目录打开**偏好的终端**。 | `modules/apps/manager.lua` |
+| `⌘ + ⌃ + ⇧ + W` | 在当前 Finder 目录打开**偏好的 IDE**。 | `modules/apps/manager.lua` |
+| `⌘ + ⌃ + ⇧ + I` | 在 Ghostty (Nvim) 中打开选中的文件。 | `modules/apps/manager.lua` |
+| `⌘ + ⇧ + N` | 在当前 Finder 目录创建新文件夹。 | `modules/apps/manager.lua` |
+| `⌥ + ⌃ + C` | **压缩选中项**，将 Finder 中选中的文件/文件夹压缩。 | `modules/tools/compress.lua` |
 
 ### 3.3 剪贴板增强
 
 | 快捷键 | 功能描述 | 来源模块 |
 | :--- | :--- | :--- |
-| `⌘ + ⌃ + ⇧ + N` | **复制文件名**，将选中项的名称（每行一个）复制到剪贴板。 | `clipboard_hotkeys.lua` |
-| `⌘ + ⌃ + ⇧ + B` | **复制文件名和内容**，将选中文件的名称和内容格式化后复制。 | `clipboard_hotkeys.lua` |
-| `⌃ + ⌥ + V` | **粘贴为文件**，将剪贴板内容通过 `finder_paste.sh` 粘贴到 Finder。 | `clipboard_hotkeys.lua` |
+| `⌘ + ⌃ + ⇧ + N` | **复制文件名**，将选中项的名称（每行一个）复制到剪贴板。 | `modules/tools/clipboard.lua` |
+| `⌘ + ⌃ + ⇧ + B` | **复制文件名和内容**，将选中文件的名称和内容格式化后复制。 | `modules/tools/clipboard.lua` |
+| `⌃ + ⌥ + V` | **粘贴为文件**，将剪贴板内容粘贴到 Finder。 | `modules/tools/clipboard.lua` |
 
 ### 3.4 脚本与宏自动化
 
@@ -71,40 +68,40 @@
 
 | 快捷键 | 功能描述 | 来源模块 |
 | :--- | :--- | :--- |
-| `⌘ + ⌃ + ⇧ + S` | **运行单个脚本**，执行在 Finder 中选中的单个脚本文件。 | `script_runner.lua` |
-| `⌘ + ⌃ + ⇧ + R` | **并行运行脚本**，同时执行在 Finder 中选中的多个脚本文件。 | `script_runner.lua` |
+| `⌘ + ⌃ + ⇧ + S` | **运行单个脚本**，执行在 Finder 中选中的单个脚本文件。 | `modules/core/script.lua` |
+| `⌘ + ⌃ + ⇧ + R` | **并行运行脚本**，同时执行在 Finder 中选中的多个脚本文件。 | `modules/core/script.lua` |
 
-#### 宏系统 (外部脚本驱动)
+#### 宏系统
 
 | 快捷键 | 功能描述 | 来源模块 |
 | :--- | :--- | :--- |
-| `⌘ + ⌃ + ⇧ + [` | **录制/标记宏步骤**，调用 `macro_record.sh`。 | `macro_controls.lua` |
-| `⌘ + ⌃ + ⇧ + ]` | **停止宏录制**，调用 `macro_stop.sh`。 | `macro_controls.lua` |
-| `⌘ + ⌃ + ⇧ + [0-9]` | **播放宏 1-10**，调用 `macro_play.sh` 播放对应编号的宏。 | `macro_hotkeys.lua` |
+| `⌘ + ⌃ + ⇧ + [` | **录制/标记宏步骤**，开始或继续录制宏。 | `modules/macro/recorder.lua` |
+| `⌘ + ⌃ + ⇧ + ]` | **停止宏录制**，完成宏的录制。 | `modules/macro/recorder.lua` |
+| `⌘ + ⌃ + ⇧ + [0-9]` | **播放宏 1-10**，播放对应编号的宏。 | `modules/macro/hotkeys.lua` |
 
 ### 3.5 应用与媒体控制
 
 | 快捷键 | 功能描述 | 来源模块 |
 | :--- | :--- | :--- |
-| `⌃ + ⌥ + W` | **启动/聚焦微信**，通过 `wechat_launch.sh` 脚本实现。 | `wechat_launcher.lua` |
-| `⌘ + ⌃ + ⇧ + ;` | **音乐播放/暂停** (特定应用，如 Apple Music)。 | `music_controls.lua` |
-| `⌘ + ⌃ + ⇧ + '` | **下一首** (特定应用)。 | `music_controls.lua` |
-| `⌘ + ⌃ + ⇧ + L` | **上一首** (特定应用)。 | `music_controls.lua` |
-| `⌘ + ⌃ + ⇧ + Z` | **Zen Browser 媒体控制**，切换播放/暂停。 | `music_controls.lua` |
-| `⌘ + ⌃ + ⇧ + P` | **系统通用媒体控制**，模拟键盘播放/暂停键，可控制任何媒体。 | `music_controls.lua` |
+| `⌃ + ⌥ + W` | **启动/聚焦微信**，快速切换到微信应用。 | `modules/apps/wechat.lua` |
+| `⌘ + ⌃ + ⇧ + ;` | **音乐播放/暂停** (特定应用，如 Apple Music)。 | `modules/media/music.lua` |
+| `⌘ + ⌃ + ⇧ + '` | **下一首** (特定应用)。 | `modules/media/music.lua` |
+| `⌘ + ⌃ + ⇧ + L` | **上一首** (特定应用)。 | `modules/media/music.lua` |
+| `⌘ + ⌃ + ⇧ + Z` | **Zen Browser 媒体控制**，切换播放/暂停。 | `modules/media/music.lua` |
+| `⌘ + ⌃ + ⇧ + P` | **系统通用媒体控制**，模拟键盘播放/暂停键，可控制任何媒体。 | `modules/media/music.lua` |
 
 ## 4. 自定义配置
 
-您可以在 `hotkeys_manager.lua` 文件中轻松切换偏好的终端和 IDE，而无需更改快捷键绑定。
+您可以在 `config/settings.lua` 文件中轻松切换偏好的终端和 IDE，而无需更改快捷键绑定。
 
-打开 `lua_comb/hotkeys_manager.lua` 文件，修改以下代码块：
+打开 `config/settings.lua` 文件，修改以下配置：
 
 ```lua
 -- -----------------------------------------------------------------------------
--- 用户配置: 在这里选择你偏好的应用
+-- 用户首选项设置
 -- -----------------------------------------------------------------------------
-local preferred_terminal = "Warp" -- 可选: "Ghostty", "Warp"
-local preferred_ide = "Windsurf"  -- 可选: "Cursor", "Windsurf"
+M.preferred_terminal = "Ghostty" -- 可选: "Ghostty", "Warp", "Terminal"
+M.preferred_ide = "Windsurf"     -- 可选: "Cursor", "Windsurf", "VSCode"
 -- -----------------------------------------------------------------------------
 ```
 

@@ -5,26 +5,16 @@ local hotkey_config = require("config.hotkeys")
 
 local M = {}
 
--- 动态加载模块
-local function lazyRequire(moduleName)
-    return setmetatable({}, {
-        __index = function(_, key)
-            local mod = require(moduleName)
-            return mod[key]
-        end
-    })
-end
-
 -- 延迟加载模块
-local app_manager = lazyRequire("modules.apps.manager")
-local script_runner = lazyRequire("modules.core.script")
-local compress_tools = lazyRequire("modules.tools.compress")
-local macro_controls = lazyRequire("modules.macro.recorder")
-local clipboard = lazyRequire("modules.tools.clipboard")
-local media = lazyRequire("modules.media.music")
-local system = lazyRequire("modules.tools.system")
-local wechat = lazyRequire("modules.apps.wechat")
-local macro_hotkeys = lazyRequire("modules.macro.hotkeys")
+local app_manager = utils.lazy_require("modules.apps.manager")
+local script_runner = utils.lazy_require("modules.core.script")
+local compress_tools = utils.lazy_require("modules.tools.compress")
+local macro_recorder = utils.lazy_require("modules.macro.recorder")
+local clipboard = utils.lazy_require("modules.tools.clipboard")
+local media = utils.lazy_require("modules.media.music")
+local system = utils.lazy_require("modules.tools.system")
+local wechat = utils.lazy_require("modules.apps.wechat")
+local macro_hotkeys = utils.lazy_require("modules.macro.hotkeys")
 
 -- -----------------------------------------------------------------------------
 -- 根据用户配置动态生成应用控制快捷键

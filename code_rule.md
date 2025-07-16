@@ -5,17 +5,17 @@
 ### 1. 参考简洁实现
 - 当存在功能相似但更简洁的实现时，优先参考简洁版本
 - 避免过度工程化，保持代码的简单性
-- 例：参考 `restart.lua` 来简化 `util_app_restart.lua`
+- 例：参考 `modules/apps/restart.lua` 来简化应用重启实现
 
 ### 2. 模块化设计
-- 使用 `common_functions.lua` 中的标准模块创建函数
-- 通过 `common.createStandardModule()` 创建模块
+- 使用 `modules/core/utils.lua` 中的标准模块创建函数
+- 通过 `utils.createAppModule()` 创建模块
 - 保持统一的模块结构：`init()`, `checkDeps()`, `setupHotkeys()`
 
 ### 3. 公共函数优先
-- 优先使用 `common_functions.lua` 中的公共函数
+- 优先使用 `modules/core/utils.lua` 中的公共函数
 - 避免重复实现相同功能
-- 使用统一的提示函数：`showInfo()`, `showError()`, `showSuccess()` 等
+- 使用统一的提示函数：`showInfo()`, `showError()`, `show_success_notification()` 等
 
 ### 4. 去除不必要的复杂性
 - 移除过度的错误处理和验证
@@ -36,7 +36,7 @@ function M.functionName()
     local variable = getValue()
     
     if not variable then
-        common.showError("错误信息")
+        utils.showError("错误信息")
         return false
     end
     
@@ -51,23 +51,23 @@ end
 ```lua
 function M.setupHotkeys()
     M:addHotkey({"cmd", "shift"}, "Q", M.functionName, "功能描述")
-    common.showInfo("热键已设置")
+    utils.showInfo("热键已设置")
 end
 ```
 
 ### 3. 依赖检查
 ```lua
 function M.checkDeps()
-    return common.checkModule("hs.application") and 
-           common.checkModule("hs.hotkey") and 
-           common.checkModule("hs.timer")
+    return utils.checkModule("hs.application") and 
+           utils.checkModule("hs.hotkey") and 
+           utils.checkModule("hs.timer")
 end
 ```
 
 ## 最佳实践
 
 ### 1. 错误处理
-- 使用 `common.showError()` 显示错误信息
+- 使用 `utils.showError()` 显示错误信息
 - 在关键点进行必要的检查
 - 避免过度的错误处理
 
@@ -83,8 +83,9 @@ end
 
 ### 4. 模块初始化
 ```lua
-if M.config.enabled then 
-    M:init() 
+function M.init()
+    -- 模块初始化代码
+    return true
 end
 
 return M

@@ -1,10 +1,10 @@
 -- 剪贴板工具模块
-local utils = require("modules.core.utils")
+local utils = require("lua_comb.common_utils")
 
-local M = {}
+local clipboard_utils = {}
 
 -- 复制选中文件的文件名到剪贴板
-M.copy_filenames = function()
+clipboard_utils.copy_filenames = function()
     local files = utils.get_selected_multiple_files()
     if #files == 0 then return hs.alert.show("❌ 在Finder中未选择文件") end
 
@@ -18,7 +18,7 @@ M.copy_filenames = function()
 end
 
 -- 复制选中文件的文件名和内容到剪贴板
-M.copy_names_and_content = function()
+clipboard_utils.copy_names_and_content = function()
     local files = utils.get_selected_multiple_files()
     if #files == 0 then return hs.alert.show("❌ 在Finder中未选择文件") end
 
@@ -49,28 +49,24 @@ M.copy_names_and_content = function()
 end
 
 -- 粘贴到Finder的功能，通过调用外部shell脚本实现
-M.paste_to_finder = function(target_dir)
-    utils.scripts.execute("common", "finder_paste.sh", function(exit_code, stdout, stderr)
+clipboard_utils.paste_to_finder = function(target_dir)
+    local script_path = hs.configdir .. "/scripts_common/finder_paste.sh"
+    local command_args = { script_path }
+
+    -- 如果提供了目标目录，则将其作为参数传递给脚本
+    if target_dir then
+        table.insert(command_args, target_dir)
+    end
+
+    -- 脚本会自己处理成功或失败的通知，这里我们只在后台记录日志
+    hs.task.new("/bin/bash", function(exit_code, stdout, stderr)
         if exit_code ~= 0 then
             utils.log("PasteToFinder", "脚本执行失败: " .. (stderr or stdout))
         else
             utils.log("PasteToFinder", "脚本执行成功")
         end
-    end, target_dir)
+    end, command_args):start()
 end
 
--- 剪贴板热键配置
-local hotkeys = {
-    { { "cmd", "ctrl", "shift" }, "n", "复制文件名", M.copy_filenames },
-    { { "cmd", "ctrl", "shift" }, "b", "复制文件名和内容", M.copy_names_and_content },
-    { { "ctrl", "alt" }, "v", "粘贴到Finder", M.paste_to_finder },
-}
-
--- 初始化快捷键
-function M.init()
-    utils.register_hotkeys(hotkeys)
-    print("📋 剪贴板工具模块已加载")
-    return true
-end
-
-return M
+print("📋 Clipboard Utils 模块已加载")
+return clipboard_utils

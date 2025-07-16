@@ -1,198 +1,93 @@
-# Hammerspoon 配置项目
-一个功能丰富、安全可靠的 Hammerspoon 配置系统，采用模块化设计，支持热重载和错误恢复。
-## 🎯 核心特性
-- ✅ **安全加载机制** - 单个模块出错不影响整体功能
-- 🔄 **热重载支持** - 修改文件后自动安全重载
-- 🛡️ **错误隔离** - 模块间互不影响，出错自动恢复备份
-- 🎮 **丰富的功能** - 音乐控制、应用管理、按键检测等
-- ⚡ **快捷键优化** - 统一的热键管理和冲突避免
-## 📁 项目结构
-```
-.hammerspoon/
-├── init.lua                      # 主配置文件
-├── lua/                          # 模块目录
-│   ├── common_functions.lua      # 通用函数库 🛠️
-│   ├── music_controls.lua        # 音乐控制器 🎵
-│   ├── util_app_restart.lua      # 应用重启工具 🔄
-│   ├── util_wechat.lua           # 微信工具 💬
-│   ├── util_mouse_follow.lua     # 鼠标跟随工具 🖱️
-│   └── util_position_recorder.lua # 位置记录工具 📍
-├── ROBUST_LOADING_GUIDE.md       # 安全加载使用指南
-└── test_config.lua               # 配置测试脚本
-```
-## 🚀 模块功能详解
-### 📜 `init.lua` - 主配置文件
-项目的入口文件，负责：
-- 加载通用函数库
-- 加载所有模块
-- 提供配置热重载功能
-- 设置全局热键绑定
-### 🛠️ `common_functions.lua` - 通用函数库
-提供项目中所有模块共用的功能：
-**消息显示模块：**
-- `showSuccess()` - 显示成功消息
-- `showError()` - 显示错误消息  
-- `showWarning()` - 显示警告消息
-- `showInfo()` - 显示信息消息
-**文件操作模块：**
-- `fileExists()` - 检查文件是否存在
-- `directoryExists()` - 检查目录是否存在
-- `loadConfigFile()` - 加载配置文件
-**应用管理模块：**
-- `launchApplication()` - 安全启动应用
-- `checkApplication()` - 检查应用状态
-**热键管理模块：**
-- `createSafeHotkey()` - 创建安全热键
-- `createHotkeyGroup()` - 创建热键组
-**实用工具模块：**
-- `deepCopy()` - 深度复制表
-- `mergeTable()` - 合并表
-- `safeExecute()` - 安全执行命令
+# Hammerspoon 配置
 
-### 🎵 `music_controls.lua` - 音乐控制器
-统一的音乐播放控制系统：
-**播放控制：**
-- `Cmd+Ctrl+Shift+;` - 播放/暂停
-- `Cmd+Ctrl+Shift+'` - 下一首
-- `Cmd+Ctrl+Shift+[` - 上一首
-- `Cmd+Ctrl+Shift+P` - 系统播放控制
-**高级功能：**
-- `Cmd+Ctrl+Shift+L` - AirPods 噪音控制切换
-- 支持 Apple Music 应用控制
-- 需要外部 AppleScript 支持
-### 🔄 `util_app_restart.lua` - 应用重启工具
-快速重启应用的实用工具：
-**主要功能：**
-- `Cmd+Shift+Q` - 重启当前前台应用
-- 支持优雅关闭和强制重启
-- 自动延迟重启，确保应用完全关闭
-**使用场景：**
-- 应用卡死需要重启
-- 开发时快速重启测试应用
-- 清理应用状态
-### 💬 `util_wechat.lua` - 微信工具
-微信快速启动和自动化工具：
-**主要功能：**
-- `Ctrl+Alt+W` - 快速启动微信
-- 自动发送回车键确认
-- 检查微信运行状态
-**应用场景：**
-- 快速启动微信应用
-- 自动处理启动确认对话框
-### 🖱️ `util_mouse_follow.lua` - 鼠标跟随工具
-窗口焦点自动鼠标跟随功能：
-**主要功能：**
-- `Cmd+Ctrl+F` - 切换鼠标跟随功能
-- 当窗口获得焦点时，自动将鼠标移到窗口中心
-- 提高多窗口操作效率
-**注意：** 此模块尚未升级到 2.0 标准。
-### 📍 `util_position_recorder.lua` - 位置记录工具
-强大的鼠标位置记录和回放系统：
-**位置记录：**
-- `Cmd+Ctrl+Shift+R` - 记录当前鼠标位置
-- `Cmd+Ctrl+Shift+C` - 清除当前应用的记录位置
-- 按应用分别保存位置信息
-**位置导航：**
-- `Cmd+Ctrl+Shift+1/2/3` - 移动到指定位置
-- `Alt+Tab` - 移动到下一个记录位置
-- `Alt+Shift+Tab` - 移动到上一个记录位置
-**批量操作：**
-- `Cmd+Ctrl+Shift+V` - 依次访问所有位置（不返回原位置）
-- `Cmd+Ctrl+Shift+B` - 依次访问所有位置（返回原位置）
-**高级功能：**
-- `Cmd+Ctrl+Shift+U` - 更新当前活动位置
-- `Cmd+Ctrl+Shift+Alt+C` - 切换点击功能
-- `Cmd+Ctrl+Shift+Alt+R` - 切换位置记录功能
-**注意：** 此模块尚未升级到 2.0 标准。
-## 🎮 快捷键总览
-### 系统级热键
-| 热键 | 功能 | 模块 |
-|------|------|------|
-### 音乐控制
-| 热键 | 功能 | 模块 |
-|------|------|------|
-| `Cmd+Ctrl+Shift+;` | 播放/暂停 | music_controls |
-| `Cmd+Ctrl+Shift+'` | 下一首 | music_controls |
-| `Cmd+Ctrl+Shift+[` | 上一首 | music_controls |
-| `Cmd+Ctrl+Shift+P` | 系统播放控制 | music_controls |
-| `Cmd+Ctrl+Shift+L` | AirPods噪音控制 | music_controls |
-### 应用管理
-| 热键 | 功能 | 模块 |
-|------|------|------|
-| `Cmd+Shift+Q` | 重启前台应用 | util_app_restart |
-| `Ctrl+Alt+W` | 启动微信 | util_wechat |
-### 位置记录
-| 热键 | 功能 | 模块 |
-|------|------|------|
-| `Cmd+Ctrl+Shift+R` | 记录位置 | util_position_recorder |
-| `Cmd+Ctrl+Shift+1/2/3` | 移动到位置 | util_position_recorder |
-| `Alt+Tab` | 下一个位置 | util_position_recorder |
-| `Cmd+Ctrl+Shift+V` | 批量访问位置 | util_position_recorder |
-## 🔧 安装和配置
-### 1. 基本安装
-```bash
-# 备份现有配置（如果有）
-mv ~/.hammerspoon ~/.hammerspoon.backup
-# 克隆或复制配置到 Hammerspoon 目录
-cp -r this_config ~/.hammerspoon
-# 重载 Hammerspoon 配置
-# 在 Hammerspoon 控制台执行: hs.reload()
+这是一个高度模块化的 Hammerspoon 配置，提供丰富的快捷键和自动化功能，以提高 macOS 的使用效率。
+
+## 功能概览
+
+- **应用控制**：快速在当前目录打开终端/IDE、重启应用等
+- **文件操作**：复制文件名、内容、文件压缩等
+- **脚本运行**：快速执行脚本文件
+- **剪贴板增强**：智能处理剪贴板内容
+- **宏录制与播放**：记录和重复鼠标操作序列
+- **媒体控制**：控制音乐播放、暂停等
+
+## 核心快捷键
+
+| 快捷键 | 功能 |
+|-------|------|
+| `⌘⌃⇧+T` | 在当前目录打开终端 |
+| `⌘⌃⇧+W` | 在当前目录打开IDE |
+| `⌘⌃⇧+S` | 运行选中脚本 |
+| `⌘⌃⇧+N` | 复制文件名 |
+| `⌘⌃⇧+;` | 音乐播放/暂停 |
+| `⌘⌃⌥⇧+H` | 显示所有快捷键帮助 |
+
+更多快捷键请参见帮助面板 (`⌘⌃⌥⇧+H`)。
+
+## 目录结构
+
 ```
-### 2. 依赖检查
-项目会自动检查依赖，如果缺少某些功能：
-**对于音乐控制模块：**
-```bash
-# 需要在 ~/useful_scripts/ 目录下放置：
-# - music.applescript (音乐控制脚本)
-# - airpods.scpt (AirPods 控制脚本)
+hammerspoon/
+├── init.lua                  # 主入口文件
+├── config/                   # 配置管理
+│   ├── settings.lua          # 用户设置
+│   └── hotkeys.lua           # 快捷键配置
+├── modules/                  # 功能模块
+│   ├── core/                 # 核心功能
+│   │   ├── utils.lua         # 通用工具库
+│   │   ├── script.lua        # 脚本执行
+│   │   └── hotkeys.lua       # 热键管理
+│   ├── apps/                 # 应用控制
+│   │   ├── manager.lua       # 应用管理器
+│   │   ├── restart.lua       # 应用重启
+│   │   └── wechat.lua        # 微信启动器
+│   ├── tools/                # 工具集
+│   │   ├── clipboard.lua     # 剪贴板工具
+│   │   ├── compress.lua      # 文件压缩
+│   │   └── system.lua        # 系统工具
+│   ├── media/                # 媒体控制
+│   │   └── music.lua         # 音乐控制
+│   └── macro/                # 宏系统
+│       ├── recorder.lua      # 宏录制
+│       ├── player.lua        # 宏播放
+│       └── hotkeys.lua       # 宏快捷键
+├── scripts/                  # 脚本目录
+│   ├── apps/                 # 应用相关脚本
+│   ├── tools/                # 工具脚本
+│   ├── media/                # 媒体脚本
+│   └── macro/                # 宏脚本
+└── macros/                   # 宏文件存储
 ```
-### 3. 配置调整
-每个模块都有配置选项，可以在模块文件顶部的 `config` 部分调整：
+
+## 安装与配置
+
+1. 安装 Hammerspoon：`brew install hammerspoon`
+2. 克隆此仓库到 `~/.hammerspoon`：
+   ```bash
+   git clone https://github.com/username/hammerspoon-config.git ~/.hammerspoon
+   ```
+3. 配置自定义设置：编辑 `config/settings.lua`
+4. 启动 Hammerspoon
+
+## 自定义配置
+
+编辑 `config/settings.lua` 文件以配置您偏好的应用：
+
 ```lua
-M.config = {
-    enabled = true,    -- 是否启用模块
-    debug = false,     -- 是否显示调试信息
-    -- 其他模块特定配置...
-}
+-- 用户首选项设置
+M.preferred_terminal = "Ghostty"  -- 可选: "Ghostty", "Warp", "Terminal" 
+M.preferred_ide = "Windsurf"      -- 可选: "Cursor", "Windsurf", "VSCode"
 ```
-## 🛡️ 安全特性
-### 错误隔离
-- 模块间相互独立，单个出错不影响其他功能
-- 详细的错误日志和状态监控
-### 热重载
-- 文件修改后自动安全重载
-- 只重载修改的模块，其他功能保持运行
-- 加载失败时自动回滚
-### 紧急恢复
-- 多重紧急恢复机制
-- 全局热键随时可用
-- 控制台命令备用方案
-## 🔍 故障排除
-### 常见问题
-**1. 模块加载失败**
-- 查看 Hammerspoon 控制台的错误信息
-- 检查相关模块的语法错误
-- 确认所有依赖模块存在
-**2. 热键不响应**
-- 检查是否有热键冲突
-- 确认模块已正确加载
-- 查看 Hammerspoon 控制台错误信息
-**3. 功能部分失效**
-- 重新加载 Hammerspoon 配置
-- 检查模块配置是否正确
-### 调试模式
-在任何模块中启用调试模式：
-```lua
-M.config.debug = true
-```
-## 📈 版本信息
-- **项目版本**: 2.0.0
-- **最后更新**: 2024-12-24
-- **兼容性**: Hammerspoon 0.9.x+
-## 🎉 特色亮点
-1. **开发友好** - 编辑脚本时不会失去所有功能
-2. **功能丰富** - 涵盖音乐、应用、输入等多个方面
-3. **高度安全** - 多重保护机制，确保稳定运行
-4. **易于扩展** - 模块化设计，方便添加新功能
-5. **统一管理** - 通用函数库提供一致的体验
-这个配置系统让 Hammerspoon 使用更加安全、高效和愉快！🚀 
+
+## 开发与扩展
+
+如需添加新功能，请参考以下步骤：
+
+1. 在适当的 `modules/` 子目录下创建新模块
+2. 在 `modules/init.lua` 中注册该模块
+3. 在 `config/hotkeys.lua` 中添加快捷键定义
+4. 重载 Hammerspoon 配置
+
+## 贡献
+
+欢迎提交 Pull Request 或创建 Issue 来改进此配置。 

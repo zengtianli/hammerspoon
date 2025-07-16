@@ -1,40 +1,21 @@
--- 统一工具库模块
+-- 统一工具库模块 (合并 common_functions.lua 和 common_utils.lua 的功能)
 local M = {}
 
--- 加载配置
-M.config = require("config.settings")
-M.scripts_dir = M.config.scripts_dir or (hs.configdir .. "/scripts")
-
--- 延迟加载模块
-M.lazy_require = function(modulePath)
-    return setmetatable({}, {
-        __index = function(_, key)
-            local mod = require(modulePath)
-            return mod[key]
-        end
-    })
-end
-
--- ===== 脚本执行 =====
+-- ===== 基础配置 =====
 M.scripts = {
-    getPath = function(category, scriptName)
-        if category then
-            return M.scripts_dir .. "/" .. category .. "/" .. scriptName
-        else
-            return M.scripts_dir .. "/" .. scriptName
-        end
+    basePath = hs.configdir .. "/scripts",
+    getPath = function(scriptName)
+        return M.scripts.basePath .. "/" .. scriptName
     end,
-
-    execute = function(category, scriptName, callback, ...)
-        local scriptPath = M.scripts.getPath(category, scriptName)
+    execute = function(scriptName, callback)
+        local scriptPath = M.scripts.getPath(scriptName)
         if not M.fileExists(scriptPath) then
-            M.showError("脚本文件不存在: " .. (category and (category .. "/") or "") .. scriptName)
+            M.showError("脚本文件不存在: " .. scriptName)
             return false
         end
 
-        local args = { ... }
-        local task = hs.task.new("/bin/bash", callback, { scriptPath, table.unpack(args) })
-        task:setWorkingDirectory(M.scripts_dir)
+        local task = hs.task.new("/bin/bash", callback, { scriptPath })
+        task:setWorkingDirectory(M.scripts.basePath)
         task:start()
         return task
     end
@@ -295,15 +276,16 @@ function M.createSafeHotkey(mods, key, fn, description)
     end
 end
 
-function M.register_hotkeys(hotkeys_table)
-    local count = 0
+function M.register_hotkeys(hotkeys_table, extra_hotkeys)
     for _, hk in ipairs(hotkeys_table) do
-        if hk[4] then -- 确保回调函数存在
+        hs.hotkey.bind(hk[1], hk[2], hk[3], hk[4])
+    end
+    if extra_hotkeys then
+        for _, hk in ipairs(extra_hotkeys) do
             hs.hotkey.bind(hk[1], hk[2], hk[3], hk[4])
-            count = count + 1
         end
     end
-    return count
+    return #hotkeys_table + (extra_hotkeys and #extra_hotkeys or 0)
 end
 
 -- ===== AppleScript 执行 =====
@@ -375,9 +357,5 @@ function M.get_count_message(count, single_text, plural_text)
     end
 end
 
-function M.init()
-    print("🔧 核心工具模块已加载")
-    return true
-end
-
+print("🔧 Common Utils 模块已加载 (统一版本)")
 return M
